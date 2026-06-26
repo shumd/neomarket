@@ -39,8 +39,8 @@ public class ItemEntity {
 
     private Integer quantity;
 
-    @Column(length = 50)
-    private String status;     //TODO Планируется замена на statusId
+    @Column(name = "id_status")
+    private Integer statusId;
 
     private String description;
 
