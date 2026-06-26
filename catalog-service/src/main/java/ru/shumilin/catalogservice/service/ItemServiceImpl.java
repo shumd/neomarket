@@ -9,7 +9,7 @@ import ru.shumilin.catalogservice.repository.ItemRepository;
 
 @Service
 @RequiredArgsConstructor
-public class CatalogServiceImpl implements CatalogService {
+public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
 

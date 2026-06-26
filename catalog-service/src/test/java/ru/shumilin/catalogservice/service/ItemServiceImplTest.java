@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class CatalogServiceImplTest {
+public class ItemServiceImplTest {
 
     @Mock
     private ItemRepository itemRepository;
@@ -26,7 +26,7 @@ public class CatalogServiceImplTest {
     private ItemMapper itemMapper;
 
     @InjectMocks
-    private CatalogServiceImpl catalogService;
+    private ItemServiceImpl catalogService;
 
 
     @Test
