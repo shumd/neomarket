@@ -15,7 +15,7 @@ public class ItemMapper { //Использовать mapStruct ?
                 entity.getPrice(),
                 entity.getCategoryId().toString(),
                 entity.getOrgSupplierId().toString(),
-                entity.getQuantity()
+                0 // quantity должно получаться из сервиса склада
         );
     }
 }

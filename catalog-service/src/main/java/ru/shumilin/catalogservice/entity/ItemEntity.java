@@ -39,8 +39,6 @@ public class ItemEntity {
 
     private Integer rating;
 
-    private Integer quantity;
-
     @Column(name = "id_status")
     private Integer statusId;
 
