@@ -13,7 +13,7 @@ import ru.shumilin.catalogservice.dto.ItemResponseDto;
 import ru.shumilin.catalogservice.service.ItemService;
 
 @RestController
-@RequestMapping("/products") // api/v1 ?
+@RequestMapping("/products")
 @RequiredArgsConstructor
 @Validated
 public class ProductRestController {
