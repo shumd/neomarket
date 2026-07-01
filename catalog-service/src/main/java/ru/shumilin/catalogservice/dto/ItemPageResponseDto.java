@@ -4,7 +4,7 @@ import java.util.List;
 
 public record ItemPageResponseDto (
         List<ItemWithSupplierResponseDto> items,
-        int limit,
-        long offset
+        int size,
+        int page
 ){
 }

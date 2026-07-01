@@ -37,7 +37,7 @@ public class ItemMapper { //Использовать mapStruct ?
         return new ItemPageResponseDto(
                 itemWithSupplierResponseDtoPage.getContent(),
                 itemWithSupplierResponseDtoPage.getSize(),
-                itemWithSupplierResponseDtoPage.getPageable().getOffset()
+                itemWithSupplierResponseDtoPage.getPageable().getPageNumber()
         );
     }
 }
