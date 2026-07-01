@@ -79,7 +79,7 @@ public class ItemMapperTest {
         ItemPageResponseDto itemPageResponseDto = new ItemPageResponseDto(
                 content,
                 page.getSize(),
-                page.getPageable().getOffset()
+                page.getPageable().getPageNumber()
         );
 
         Assertions.assertEquals(itemPageResponseDto, itemMapper.toPageResponseDto(page));
