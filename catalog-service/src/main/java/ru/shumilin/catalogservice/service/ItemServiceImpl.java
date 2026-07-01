@@ -27,8 +27,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemPageResponseDto findAllByName(Integer categoryId,
                                              String search,
                                              SortType sortType,
-                                             int limit,
-                                             int offset) {
+                                             int size,
+                                             int page) {
         Sort sort = switch (sortType){
             case ID_ASC -> Sort.by("id").ascending();
             case NAME_ASC -> Sort.by("name").ascending();
@@ -37,7 +37,7 @@ public class ItemServiceImpl implements ItemService {
             case PRICE_ASC -> Sort.by("price").ascending();
             case PRICE_DESC -> Sort.by("price").descending();
         };
-        PageRequest pageRequest = PageRequest.of(offset/limit, limit, sort);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         return itemMapper.toPageResponseDto(
                 itemRepository.findAllByName(search, categoryId, pageRequest)
                 .map(itemMapper::toWithSupplierResponseDto));
