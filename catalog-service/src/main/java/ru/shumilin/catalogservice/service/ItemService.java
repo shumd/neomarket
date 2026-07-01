@@ -9,6 +9,6 @@ public interface ItemService {
     ItemPageResponseDto findAllByName(Integer categoryId,
                                       String search,
                                       SortType sortType,
-                                      int limit,
-                                      int offset);
+                                      int size,
+                                      int page);
 }
