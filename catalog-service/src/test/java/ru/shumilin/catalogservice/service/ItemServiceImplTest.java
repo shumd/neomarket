@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
 import ru.shumilin.catalogservice.entity.ItemEntity;
 import ru.shumilin.catalogservice.exception.ItemNotActiveException;
@@ -27,17 +28,20 @@ public class ItemServiceImplTest {
     private ItemMapper itemMapper;
 
     @InjectMocks
-    private ItemServiceImpl catalogService;
+    private ItemServiceImpl itemService;
 
 
     @Test
     void findById_withValidId_returnItemResponseDto(){
+        ReflectionTestUtils.setField(itemService, "activeStatusId", 1);
+
         ItemEntity itemEntity = ItemEntity.builder()
                 .id(10)
                 .name("Test item")
                 .description("Test description")
                 .price(new BigDecimal("1234.56"))
                 .categoryId(1)
+                .statusId(1)
                 .orgSupplierId(1)
                 .quantity(1)
                 .build();
@@ -57,7 +61,7 @@ public class ItemServiceImplTest {
         Mockito.when(itemMapper.toResponseDto(itemEntity))
                 .thenReturn(itemResponseDto);
 
-        Assertions.assertEquals(itemResponseDto, catalogService.findById(10));
+        Assertions.assertEquals(itemResponseDto, itemService.findById(10));
     }
 
     @Test
@@ -65,11 +69,13 @@ public class ItemServiceImplTest {
         Mockito.when(itemRepository.findById(1)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ItemNotFoundException.class,
-                () -> catalogService.findById(1));
+                () -> itemService.findById(1));
     }
 
     @Test
-    void findById_withInvalidCategoryId_throwItemNotActiveException(){
+    void findById_withInvalidStatusId_throwItemNotActiveException(){
+        ReflectionTestUtils.setField(itemService, "activeStatusId", 1);
+
         Mockito.when(itemRepository.findById(1)).thenReturn(Optional.of(
                 ItemEntity.builder()
                         .id(1)
@@ -82,6 +88,6 @@ public class ItemServiceImplTest {
         ));
 
         Assertions.assertThrows(ItemNotActiveException.class,
-                () -> catalogService.findById(1));
+                () -> itemService.findById(1));
     }
 }
