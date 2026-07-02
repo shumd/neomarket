@@ -44,6 +44,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto("Resource not found"));
     }
 
+    @ExceptionHandler(ItemNotActiveException.class)
+    public ResponseEntity<ErrorResponseDto> handleItemNotActive(ItemNotActiveException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDto(e.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGeneral(Exception e) {
         log.error("Unexpected exception: ", e);

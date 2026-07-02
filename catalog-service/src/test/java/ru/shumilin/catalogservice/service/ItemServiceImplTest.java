@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
 import ru.shumilin.catalogservice.entity.ItemEntity;
+import ru.shumilin.catalogservice.exception.ItemNotActiveException;
 import ru.shumilin.catalogservice.exception.ItemNotFoundException;
 import ru.shumilin.catalogservice.mapper.ItemMapper;
 import ru.shumilin.catalogservice.repository.ItemRepository;
@@ -64,6 +65,23 @@ public class ItemServiceImplTest {
         Mockito.when(itemRepository.findById(1)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ItemNotFoundException.class,
+                () -> catalogService.findById(1));
+    }
+
+    @Test
+    void findById_withInvalidCategoryId_throwItemNotActiveException(){
+        Mockito.when(itemRepository.findById(1)).thenReturn(Optional.of(
+                ItemEntity.builder()
+                        .id(1)
+                        .name("Test name")
+                        .price(new BigDecimal("1234.56"))
+                        .quantity(1)
+                        .statusId(2)
+                        .categoryId(2)
+                        .build()
+        ));
+
+        Assertions.assertThrows(ItemNotActiveException.class,
                 () -> catalogService.findById(1));
     }
 }
