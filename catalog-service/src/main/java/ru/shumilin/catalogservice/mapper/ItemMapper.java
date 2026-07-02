@@ -15,7 +15,7 @@ public class ItemMapper {
                 entity.getPrice(),
                 entity.getCategoryId() == null ? null : entity.getCategoryId().toString(),
                 entity.getOrgSupplierId() == null ? null : entity.getOrgSupplierId().toString(),
-                entity.getQuantity()
+                entity.getQuantity() //TODO Quantity должен синхронизироваться с actualisation-service
         );
     }
 }
