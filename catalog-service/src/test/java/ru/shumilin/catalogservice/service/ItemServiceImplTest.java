@@ -5,14 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.shumilin.catalogservice.dto.ItemPageResponseDto;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
 import ru.shumilin.catalogservice.dto.ItemWithSupplierResponseDto;
+import ru.shumilin.catalogservice.exception.ItemNotActiveException;
 import ru.shumilin.catalogservice.model.SortType;
 import ru.shumilin.catalogservice.model.entity.ItemEntity;
 import ru.shumilin.catalogservice.exception.ItemNotFoundException;
@@ -43,12 +46,15 @@ public class ItemServiceImplTest {
 
     @Test
     void findById_withValidId_returnItemResponseDto(){
+        ReflectionTestUtils.setField(itemService, "activeStatusId", 1);
+
         ItemEntity itemEntity = ItemEntity.builder()
                 .id(10)
                 .name("Test item")
                 .description("Test description")
                 .price(new BigDecimal("1234.56"))
                 .categoryId(1)
+                .statusId(1)
                 .orgSupplierId(1)
                 .quantity(1)
                 .build();
@@ -76,6 +82,25 @@ public class ItemServiceImplTest {
         when(itemRepository.findById(1)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ItemNotFoundException.class,
+                () -> itemService.findById(1));
+    }
+
+    @Test
+    void findById_withInvalidStatusId_throwItemNotActiveException(){
+        ReflectionTestUtils.setField(itemService, "activeStatusId", 1);
+
+        Mockito.when(itemRepository.findById(1)).thenReturn(Optional.of(
+                ItemEntity.builder()
+                        .id(1)
+                        .name("Test name")
+                        .price(new BigDecimal("1234.56"))
+                        .quantity(1)
+                        .statusId(2)
+                        .categoryId(2)
+                        .build()
+        ));
+
+        Assertions.assertThrows(ItemNotActiveException.class,
                 () -> itemService.findById(1));
     }
 

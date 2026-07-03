@@ -2,6 +2,7 @@ package ru.shumilin.catalogservice.exception;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import ru.shumilin.catalogservice.dto.ErrorResponseDto;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ItemNotFoundException.class)
@@ -42,8 +44,16 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto("Resource not found"));
     }
 
+    @ExceptionHandler(ItemNotActiveException.class)
+    public ResponseEntity<ErrorResponseDto> handleItemNotActive(ItemNotActiveException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDto(e.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDto> handleGeneral() {
+    public ResponseEntity<ErrorResponseDto> handleGeneral(Exception e) {
+        log.error("Unexpected exception: ", e);
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDto("Unexpected error"));
     }

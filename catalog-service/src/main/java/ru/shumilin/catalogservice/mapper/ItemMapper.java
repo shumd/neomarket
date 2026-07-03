@@ -9,7 +9,7 @@ import ru.shumilin.catalogservice.model.entity.ItemEntity;
 import ru.shumilin.catalogservice.model.projection.ItemWithSupplierProjection;
 
 @Component
-public class ItemMapper { //Использовать mapStruct ?
+public class ItemMapper {
 
     public ItemResponseDto toResponseDto(ItemEntity entity){
         return new ItemResponseDto(
@@ -17,9 +17,9 @@ public class ItemMapper { //Использовать mapStruct ?
                 entity.getName(),
                 entity.getDescription(),
                 entity.getPrice(),
-                entity.getCategoryId().toString(),
-                entity.getOrgSupplierId().toString(),
-                entity.getQuantity()
+                entity.getCategoryId() == null ? null : entity.getCategoryId().toString(),
+                entity.getOrgSupplierId() == null ? null : entity.getOrgSupplierId().toString(),
+                entity.getQuantity() //TODO Quantity должен синхронизироваться с actualisation-service
         );
     }
 
