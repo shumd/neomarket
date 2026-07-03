@@ -1,9 +1,8 @@
 package ru.shumilin.catalogservice.service;
 
-import ru.shumilin.catalogservice.dto.CategoryResponseDto;
 
-import java.util.List;
+import ru.shumilin.catalogservice.dto.CategoryListResponseDto;
 
 public interface CategoryService {
-    List<CategoryResponseDto> findAll();
+    CategoryListResponseDto findAll();
 }

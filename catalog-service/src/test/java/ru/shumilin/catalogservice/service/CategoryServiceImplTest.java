@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import ru.shumilin.catalogservice.dto.CategoryListResponseDto;
 import ru.shumilin.catalogservice.dto.CategoryResponseDto;
 import ru.shumilin.catalogservice.mapper.CategoryMapper;
 import ru.shumilin.catalogservice.model.entity.CategoryEntity;
@@ -45,7 +46,7 @@ public class CategoryServiceImplTest {
 
         when(categoryRepository.findAll()).thenReturn(List.of(firstEntity, secondEntity));
 
-        Assertions.assertEquals(List.of(secondResponseDto, firstResponseDto),
+        Assertions.assertEquals(new CategoryListResponseDto(List.of(secondResponseDto, firstResponseDto)),
                 categoryService.findAll());
     }
 
@@ -53,6 +54,6 @@ public class CategoryServiceImplTest {
     void findAll_whenRepositoryReturnEmptyList_returnEmptyResponseDtoList() {
         when(categoryRepository.findAll()).thenReturn(List.of());
 
-        Assertions.assertEquals(List.of(), categoryService.findAll());
+        Assertions.assertEquals(new CategoryListResponseDto(List.of()), categoryService.findAll());
     }
 }
