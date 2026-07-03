@@ -1,8 +1,10 @@
 package ru.tataev.basket_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,5 +15,7 @@ public class BasketResponseDto {
     private BigDecimal total_amount;
     private String status;
     private List<ItemDto> id_item;
-    private String date_order;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate date_order;
 }

@@ -7,7 +7,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 class BasketServiceApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void validationErrorStatus() {
+	}
+
+	@Test
+	void validationErrorTotalAmountMax() {
+	}
+
+	@Test
+	void validationErrorIdOrderBlank() {
+	}
+
+	@Test
+	void validationErrorIdItemsSize() {
 	}
 
 }
