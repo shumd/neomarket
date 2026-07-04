@@ -13,9 +13,10 @@ import ru.shumilin.catalogservice.service.CategoryService;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-public class CategoryRestController {
+public class CategoryRestController implements CategoryAPI{
     private final CategoryService categoryService;
 
+    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoryListResponseDto> findAll(){
         return ResponseEntity.ok(categoryService.findAll());
