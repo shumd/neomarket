@@ -1,11 +1,7 @@
 package ru.shumilin.catalogservice.controller;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,10 +20,11 @@ public class ProductRestController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemResponseDto> findItemById(
-            @PathVariable
-            @Positive(message = "Id must be positive")
-            int id){
-        return ResponseEntity.ok(itemService.findById(id));
+            @PathVariable("id")
+            @Min(value = 1, message = "Id must be positive")
+            @Max(value = 2_147_483_647, message = "Id must not exceed 2147483647")
+            Long id){
+        return ResponseEntity.ok(itemService.findById(id.intValue()));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,10 +34,10 @@ public class ProductRestController {
             Integer categoryId,
 
             @RequestParam(required = false)
-            @Length(min = 1, max = 100, message = "Search length must be between 1 and 100")
+            @Size(min = 1, max = 100, message = "Search length must be between 1 and 100")
             String search,
 
-            @RequestParam(name = "sort", defaultValue = "ID_ASC")
+            @RequestParam(name = "sort", required = false)
             SortType sortType,
 
             @Min(value = 1, message = "Size must be between 1 and 100")

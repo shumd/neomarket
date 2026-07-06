@@ -7,11 +7,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.shumilin.catalogservice.dto.ItemPageResponseDto;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
-import ru.shumilin.catalogservice.exception.ItemNotActiveException;
 import ru.shumilin.catalogservice.exception.ItemNotFoundException;
 import ru.shumilin.catalogservice.mapper.ItemMapper;
 import ru.shumilin.catalogservice.model.SortType;
-import ru.shumilin.catalogservice.model.entity.ItemEntity;
 import ru.shumilin.catalogservice.repository.ItemRepository;
 
 
@@ -26,14 +24,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemResponseDto findById(int id) {
-        ItemEntity entity = itemRepository.findById(id)
-                .orElseThrow(() -> new ItemNotFoundException(id));
-
-        if(entity.getStatusId() == null || entity.getStatusId() != activeStatusId){
-            throw new ItemNotActiveException(id);
-        }
-
-        return itemMapper.toResponseDto(entity);
+        return itemMapper.toResponseDto(itemRepository
+                .findByIdAndStatusId(id, activeStatusId)
+                .orElseThrow(() -> new ItemNotFoundException(id)));
     }
 
     @Override
@@ -42,7 +35,8 @@ public class ItemServiceImpl implements ItemService {
                                              SortType sortType,
                                              int size,
                                              int page) {
-        Sort sort = switch (sortType){
+        SortType type = sortType == null ? SortType.ID_ASC : sortType;
+        Sort sort = switch (type){
             case ID_ASC -> Sort.by("id").ascending();
             case NAME_ASC -> Sort.by("name").ascending();
             case NAME_DESC -> Sort.by("name").descending();

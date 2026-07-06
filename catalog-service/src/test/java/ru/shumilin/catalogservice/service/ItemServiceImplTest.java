@@ -15,7 +15,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import ru.shumilin.catalogservice.dto.ItemPageResponseDto;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
 import ru.shumilin.catalogservice.dto.ItemWithSupplierResponseDto;
-import ru.shumilin.catalogservice.exception.ItemNotActiveException;
 import ru.shumilin.catalogservice.model.SortType;
 import ru.shumilin.catalogservice.model.entity.ItemEntity;
 import ru.shumilin.catalogservice.exception.ItemNotFoundException;
@@ -43,10 +42,12 @@ public class ItemServiceImplTest {
     @InjectMocks
     private ItemServiceImpl itemService;
 
+    private final Integer activeStatusId = 1;
+
 
     @Test
     void findById_withValidId_returnItemResponseDto(){
-        ReflectionTestUtils.setField(itemService, "activeStatusId", 1);
+        ReflectionTestUtils.setField(itemService, "activeStatusId", activeStatusId);
 
         ItemEntity itemEntity = ItemEntity.builder()
                 .id(10)
@@ -68,10 +69,10 @@ public class ItemServiceImplTest {
                 "1",
                 1);
 
-        when(itemRepository.findById(10))
+        Mockito.when(itemRepository.findByIdAndStatusId(10, activeStatusId))
                 .thenReturn(Optional.of(itemEntity));
 
-        when(itemMapper.toResponseDto(itemEntity))
+        Mockito.when(itemMapper.toResponseDto(itemEntity))
                 .thenReturn(itemResponseDto);
 
         Assertions.assertEquals(itemResponseDto, itemService.findById(10));
@@ -79,28 +80,12 @@ public class ItemServiceImplTest {
 
     @Test
     void findById_withInvalidId_throwItemNotFoundException(){
-        when(itemRepository.findById(1)).thenReturn(Optional.empty());
+        ReflectionTestUtils.setField(itemService, "activeStatusId", activeStatusId);
+
+        Mockito.when(itemRepository.findByIdAndStatusId(1, activeStatusId))
+                .thenReturn(Optional.empty());
 
         Assertions.assertThrows(ItemNotFoundException.class,
-                () -> itemService.findById(1));
-    }
-
-    @Test
-    void findById_withInvalidStatusId_throwItemNotActiveException(){
-        ReflectionTestUtils.setField(itemService, "activeStatusId", 1);
-
-        Mockito.when(itemRepository.findById(1)).thenReturn(Optional.of(
-                ItemEntity.builder()
-                        .id(1)
-                        .name("Test name")
-                        .price(new BigDecimal("1234.56"))
-                        .quantity(1)
-                        .statusId(2)
-                        .categoryId(2)
-                        .build()
-        ));
-
-        Assertions.assertThrows(ItemNotActiveException.class,
                 () -> itemService.findById(1));
     }
 

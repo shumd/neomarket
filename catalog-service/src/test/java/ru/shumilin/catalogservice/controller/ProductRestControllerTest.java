@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.shumilin.catalogservice.dto.ItemPageResponseDto;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
 import ru.shumilin.catalogservice.dto.ItemWithSupplierResponseDto;
-import ru.shumilin.catalogservice.exception.ItemNotActiveException;
 import ru.shumilin.catalogservice.exception.ItemNotFoundException;
 import ru.shumilin.catalogservice.model.SortType;
 import ru.shumilin.catalogservice.service.ItemService;
@@ -33,7 +32,7 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findItemById_withValidId_returnItem() {
+    void findItemById_withValidId_returnItem(){
         ItemResponseDto itemResponseDto = new ItemResponseDto(
                 "1",
                 "Test item",
@@ -45,7 +44,7 @@ public class ProductRestControllerTest {
 
         when(itemService.findById(1)).thenReturn(itemResponseDto);
 
-        mockMvc.perform(get("/products/{id}", 1))
+        mockMvc.perform(get("/products/{id}",1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("Test item"))
@@ -59,8 +58,8 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findItemById_withInvalidId_return400HttpCode() {
-        mockMvc.perform(get("/products/{id}", -1))
+    void findItemById_withInvalidId_return400HttpCode(){
+        mockMvc.perform(get("/products/{id}",-1))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Id must be positive"));
         verifyNoInteractions(itemService);
@@ -68,17 +67,17 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findItemById_withTooLongId_return400HttpCode() {
+    void findItemById_withTooLongId_return400HttpCode(){
         mockMvc.perform(get("/products/{id}", 129575218768L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Invalid request parameter"));
+                        .value("Id must not exceed 2147483647"));
         verifyNoInteractions(itemService);
     }
 
     @Test
     @SneakyThrows
-    void findItemById_withEmptyId_return404HttpCode() {
+    void findItemById_withEmptyId_return404HttpCode(){
         mockMvc.perform(get("/products/"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message")
@@ -88,7 +87,7 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findItemById_withNonExistingId_return404HttpCode() {
+    void findItemById_withNonExistingId_return404HttpCode(){
         int id = 2532;
 
         when(itemService.findById(id)).thenThrow(new ItemNotFoundException(id));
@@ -101,21 +100,7 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findItemById_withNotActiveStatusId_return404HttpCode(){
-        int id = 124;
-
-        when(itemService.findById(anyInt()))
-                .thenThrow(new ItemNotActiveException(id));
-
-        mockMvc.perform(get("/products/{id}", id))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message")
-                        .value("Item with id %d is not active".formatted(id)));
-    }
-
-    @Test
-    @SneakyThrows
-    void findItemById_withInvalidAcceptHeader_return406HttpCode() {
+    void findItemById_withInvalidAcceptHeader_return406HttpCode(){
         mockMvc.perform(get("/products/{id}", 1)
                         .accept(MediaType.APPLICATION_PDF))
                 .andExpect(status().isNotAcceptable());
@@ -124,11 +109,11 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findItemById_whenServerError_return500HttpCode() {
+    void findItemById_whenServerError_return500HttpCode(){
         when(itemService.findById(1))
                 .thenThrow(NullPointerException.class);
 
-        mockMvc.perform(get("/products/{id}", 1))
+        mockMvc.perform(get("/products/{id}",1))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message")
                         .value("Unexpected error"));
@@ -146,7 +131,7 @@ public class ProductRestControllerTest {
                 .andExpect(jsonPath("$.items[0].id").value("5"));
 
         verify(itemService, times(1))
-                .findAllByName(isNull(), isNull(), eq(SortType.ID_ASC), eq(20), eq(0));
+                .findAllByName(isNull(), isNull(), isNull(), eq(20), eq(0));
     }
 
     @Test
@@ -161,7 +146,7 @@ public class ProductRestControllerTest {
                 .andExpect(jsonPath("$.items[0].name").value("item 5"));
 
         verify(itemService, times(1))
-                .findAllByName(isNull(), eq("5"), eq(SortType.ID_ASC), eq(20), eq(0));
+                .findAllByName(isNull(), eq("5"), isNull(), eq(20), eq(0));
     }
 
     @Test
@@ -177,7 +162,7 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findAllByName_withTooLongSearchParam_returnFirstPageContainsSearch() {
+    void findAllByName_withTooLongSearchParam_return400HttpCode() {
         mockMvc.perform(get("/products?search=%s".formatted("a".repeat(101))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
@@ -310,15 +295,6 @@ public class ProductRestControllerTest {
     @Test
     @SneakyThrows
     void findAllByName_withInvalidAcceptHeader_return406HttpCode() {
-        mockMvc.perform(get("/products")
-                        .accept(MediaType.APPLICATION_PDF))
-                .andExpect(status().isNotAcceptable());
-        verifyNoInteractions(itemService);
-    }
-
-    @Test
-    @SneakyThrows
-    void findAllByName_when_return406HttpCode() {
         mockMvc.perform(get("/products")
                         .accept(MediaType.APPLICATION_PDF))
                 .andExpect(status().isNotAcceptable());
