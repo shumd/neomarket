@@ -1,11 +1,7 @@
 package ru.shumilin.catalogservice.controller;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +34,7 @@ public class ProductRestController {
             Integer categoryId,
 
             @RequestParam(required = false)
-            @Length(min = 1, max = 100, message = "Search length must be between 1 and 100")
+            @Size(min = 1, max = 100, message = "Search length must be between 1 and 100")
             String search,
 
             @RequestParam(name = "sort", required = false)
