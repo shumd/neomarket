@@ -1,6 +1,7 @@
 package ru.shumilin.catalogservice.controller;
 
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,9 @@ public class ProductRestController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemResponseDto> findItemById(
             @PathVariable
-            @Positive(message = "Id must be positive")
-            int id){
-        return ResponseEntity.ok(itemService.findById(id));
+            @Min(value = 1, message = "Id must be positive")
+            @Max(value = 2_147_483_647, message = "Id must not exceed 2147483647")
+            Long id){
+        return ResponseEntity.ok(itemService.findById(id.intValue()));
     }
 }

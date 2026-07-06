@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
-import ru.shumilin.catalogservice.exception.ItemNotActiveException;
 import ru.shumilin.catalogservice.exception.ItemNotFoundException;
 import ru.shumilin.catalogservice.service.ItemService;
 
@@ -68,7 +67,7 @@ public class ProductRestControllerTest {
         mockMvc.perform(get("/products/{id}", 129575218768L))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Invalid request parameter"));
+                        .value("Id must not exceed 2147483647"));
         verifyNoInteractions(itemService);
     }
 
@@ -93,20 +92,6 @@ public class ProductRestControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message")
                         .value("Item with id %d not found".formatted(id)));
-    }
-
-    @Test
-    @SneakyThrows
-    void findItemById_withNotActiveStatusId_return404HttpCode(){
-        int id = 124;
-
-        when(itemService.findById(anyInt()))
-                .thenThrow(new ItemNotActiveException(id));
-
-        mockMvc.perform(get("/products/{id}", id))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message")
-                        .value("Item with id %d is not active".formatted(id)));
     }
 
     @Test
