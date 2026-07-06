@@ -14,12 +14,7 @@ public class StringToSortTypeConverter implements Converter<String, SortType> {
                 throw new IllegalSortTypeException(source);
             }
 
-            SortType sortType = SortType.valueOf(source.toUpperCase());
-
-            if (sortType == SortType.ID_ASC) {
-                throw new IllegalSortTypeException(source);
-            }
-            return sortType;
+            return SortType.valueOf(source.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalSortTypeException(source);
         }
