@@ -131,7 +131,7 @@ public class ProductRestControllerTest {
                 .andExpect(jsonPath("$.items[0].id").value("5"));
 
         verify(itemService, times(1))
-                .findAllByName(isNull(), isNull(), eq(SortType.ID_ASC), eq(20), eq(0));
+                .findAllByName(isNull(), isNull(), isNull(), eq(20), eq(0));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ProductRestControllerTest {
                 .andExpect(jsonPath("$.items[0].name").value("item 5"));
 
         verify(itemService, times(1))
-                .findAllByName(isNull(), eq("5"), eq(SortType.ID_ASC), eq(20), eq(0));
+                .findAllByName(isNull(), eq("5"), isNull(), eq(20), eq(0));
     }
 
     @Test
