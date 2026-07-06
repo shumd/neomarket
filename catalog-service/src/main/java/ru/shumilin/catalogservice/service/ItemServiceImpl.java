@@ -35,7 +35,8 @@ public class ItemServiceImpl implements ItemService {
                                              SortType sortType,
                                              int size,
                                              int page) {
-        Sort sort = switch (sortType){
+        SortType type = sortType == null ? SortType.ID_ASC : sortType;
+        Sort sort = switch (type){
             case ID_ASC -> Sort.by("id").ascending();
             case NAME_ASC -> Sort.by("name").ascending();
             case NAME_DESC -> Sort.by("name").descending();

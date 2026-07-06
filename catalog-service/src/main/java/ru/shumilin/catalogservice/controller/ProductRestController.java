@@ -41,7 +41,7 @@ public class ProductRestController {
             @Length(min = 1, max = 100, message = "Search length must be between 1 and 100")
             String search,
 
-            @RequestParam(name = "sort", defaultValue = "ID_ASC")
+            @RequestParam(name = "sort", required = false)
             SortType sortType,
 
             @Min(value = 1, message = "Size must be between 1 and 100")
