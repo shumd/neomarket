@@ -75,15 +75,4 @@ public class ItemServiceImplTest {
         Assertions.assertThrows(ItemNotFoundException.class,
                 () -> itemService.findById(1));
     }
-
-    @Test
-    void findById_withInvalidStatusId_throwItemNotFoundException(){
-        ReflectionTestUtils.setField(itemService, "activeStatusId", activeStatusId);
-
-        Mockito.when(itemRepository.findByIdAndStatusId(1, activeStatusId))
-                .thenReturn(Optional.empty());
-
-        Assertions.assertThrows(ItemNotFoundException.class,
-                () -> itemService.findById(1));
-    }
 }
