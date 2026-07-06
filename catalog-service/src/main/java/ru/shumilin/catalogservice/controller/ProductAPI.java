@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import ru.shumilin.catalogservice.dto.ErrorResponseDto;
@@ -33,6 +34,8 @@ public interface ProductAPI {
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     ResponseEntity<ItemResponseDto> findItemById(
+            @Min(value = 1, message = "Id must be positive")
+            @Max(value = 2_147_483_647, message = "Id must not exceed 2147483647")
             @Parameter(
                     description = "Идентификатор товара",
                     example = "1",
@@ -51,12 +54,14 @@ public interface ProductAPI {
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     ResponseEntity<ItemPageResponseDto> findAllByName(
+            @Positive(message = "Category id must be positive")
             @Parameter(
                     description = "Фильтр по id категории",
                     example = "1"
             )
             Integer categoryId,
 
+            @Size(min = 1, max = 100, message = "Search length must be between 1 and 100")
             @Parameter(
                     description = "Поиск по названию товара",
                     example = "смартфон"
@@ -69,12 +74,15 @@ public interface ProductAPI {
             )
             SortType sortType,
 
+            @Min(value = 1, message = "Size must be between 1 and 100")
+            @Max(value = 100, message = "Size must be between 1 and 100")
             @Parameter(
                     description = "Количество товаров на странице",
                     example = "20"
             )
             int size,
 
+            @PositiveOrZero(message = "Page must be positive or zero")
             @Parameter(
                     description = "Смещение для пагинации",
                     example = "0"
