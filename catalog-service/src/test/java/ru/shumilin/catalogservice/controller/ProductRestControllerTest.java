@@ -162,7 +162,7 @@ public class ProductRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findAllByName_withTooLongSearchParam_returnFirstPageContainsSearch() {
+    void findAllByName_withTooLongSearchParam_return400HttpCode() {
         mockMvc.perform(get("/products?search=%s".formatted("a".repeat(101))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
@@ -295,15 +295,6 @@ public class ProductRestControllerTest {
     @Test
     @SneakyThrows
     void findAllByName_withInvalidAcceptHeader_return406HttpCode() {
-        mockMvc.perform(get("/products")
-                        .accept(MediaType.APPLICATION_PDF))
-                .andExpect(status().isNotAcceptable());
-        verifyNoInteractions(itemService);
-    }
-
-    @Test
-    @SneakyThrows
-    void findAllByName_when_return406HttpCode() {
         mockMvc.perform(get("/products")
                         .accept(MediaType.APPLICATION_PDF))
                 .andExpect(status().isNotAcceptable());
