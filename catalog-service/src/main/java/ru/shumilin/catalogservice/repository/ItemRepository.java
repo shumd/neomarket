@@ -10,8 +10,11 @@ import ru.shumilin.catalogservice.model.entity.ItemEntity;
 import ru.shumilin.catalogservice.model.projection.ItemWithSupplierProjection;
 
 
+import java.util.Optional;
+
 @Repository
 public interface ItemRepository extends CrudRepository<ItemEntity, Integer> {
+    Optional<ItemEntity> findByIdAndStatusId(Integer id, Integer statusId);
     @Query(value = """
             SELECT i.id, i.name, i.price, o.name AS supplier_name, i.quantity
             FROM CATALOG.item i

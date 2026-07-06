@@ -24,10 +24,11 @@ public class ProductRestController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemResponseDto> findItemById(
-            @PathVariable
-            @Positive(message = "Id must be positive")
-            int id){
-        return ResponseEntity.ok(itemService.findById(id));
+            @PathVariable("id")
+            @Min(value = 1, message = "Id must be positive")
+            @Max(value = 2_147_483_647, message = "Id must not exceed 2147483647")
+            Long id){
+        return ResponseEntity.ok(itemService.findById(id.intValue()));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
