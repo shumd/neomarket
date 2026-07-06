@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import ru.tataev.basket_service.entity.OrderStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,6 +18,10 @@ public class CreateRequestDto {
     @Pattern(regexp = "^\\d+$", message = "id_order должен содержать только цифры")
     private String idOrder;
 
+    @JsonProperty("address")
+    @NotBlank(message = "address не должен быть пустым")
+    private String address;
+
     @JsonProperty("id_user")
     @NotNull(message = "id_user не может быть пустым")
     private UUID idUser;
@@ -24,7 +29,8 @@ public class CreateRequestDto {
     @JsonProperty("total_amount")
     @NotNull(message = "total_amount не может быть пустым")
     @DecimalMin(value = "1.0", message = "total_amount должен быть >= 1")
-    @DecimalMax(value = "999999999.99", message = "total_amount не должен превышать 999 999 999.99")
+    @DecimalMax(value = "99999999.99", message = "total_amount не должен превышать 99 999 999.99")
+    @Digits(integer = 9, fraction = 2, message = "total_amount не может иметь более 2 знаков после запятой")
     private BigDecimal totalAmount;
 
     @JsonProperty("id_item")
@@ -35,7 +41,6 @@ public class CreateRequestDto {
 
     @JsonProperty("status")
     @NotBlank(message = "status не может быть пустым")
-    @Pattern(regexp = "^(Не оформлен|Не оплачен)$")
     private String status;
 }
 

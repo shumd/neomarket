@@ -17,7 +17,7 @@ public class BasketRestController {
 
     @PostMapping("/BuyFromBasket")
     public ResponseEntity<BasketResponseDto> buy(@Valid @RequestBody CreateRequestDto req) {
-        BasketResponseDto res = basketService.createBasket(req);
+        BasketResponseDto res = basketService.updateBasket(req);
         return ResponseEntity.status(201).body(res);
     }
 }
