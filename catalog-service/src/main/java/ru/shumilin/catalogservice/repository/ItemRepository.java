@@ -19,14 +19,15 @@ public interface ItemRepository extends CrudRepository<ItemEntity, Integer> {
             SELECT i.id, i.name, i.price, o.name AS supplier_name, i.quantity
             FROM CATALOG.item i
             JOIN users.organization o ON i.id_org_supplier = o.id
-            WHERE i.name ILIKE CONCAT('%', :name, '%')
+            WHERE (:name IS NULL OR i.name ILIKE CONCAT('%', :name, '%'))
                         AND (:categoryId IS NULL OR i.id_category = :categoryId)
             """,
             countQuery = """
                     SELECT COUNT(*)
                     FROM catalog.item i
-                    WHERE i.name ILIKE CONCAT('%', :name, '%')
-                                        AND (:categoryId IS NULL OR i.id_category = :categoryId)
+                    JOIN users.organization o ON i.id_org_supplier = o.id
+                    WHERE (:name IS NULL OR i.name ILIKE CONCAT('%', :name, '%'))
+                                AND (:categoryId IS NULL OR i.id_category = :categoryId)
                     """,
             nativeQuery = true)
     Page<ItemWithSupplierProjection> findAllByName(@Param("name") String name,
