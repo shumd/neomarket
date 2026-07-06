@@ -15,9 +15,10 @@ import ru.shumilin.catalogservice.service.ItemService;
 @RequestMapping("/products")
 @RequiredArgsConstructor
 @Validated
-public class ProductRestController {
+public class ProductRestController implements ProductAPI {
     private final ItemService itemService;
 
+    @Override
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemResponseDto> findItemById(
             @PathVariable("id")
@@ -27,6 +28,7 @@ public class ProductRestController {
         return ResponseEntity.ok(itemService.findById(id.intValue()));
     }
 
+    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemPageResponseDto> findAllByName(
             @RequestParam(name = "category_id", required = false)
