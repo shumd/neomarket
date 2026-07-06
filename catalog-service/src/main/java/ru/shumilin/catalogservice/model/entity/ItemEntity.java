@@ -1,4 +1,4 @@
-package ru.shumilin.catalogservice.entity;
+package ru.shumilin.catalogservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
