@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/neomarket
+    username: postgres
+
+jpa:
+  properties:
+    hibernate:
+      default_schema: users
