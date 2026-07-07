@@ -26,6 +26,10 @@ public class UsersEntity {
     private String firstName;
 
     @NotNull
+    @Column(name = "middle_name", length = 200)
+    private String middleName;
+
+    @NotNull
     @Column(name = "last_name", length = 200)
     private String lastName;
 
