@@ -27,13 +27,21 @@ public class UsersEntity {
 
     @NotNull
     @Column(name = "last_name", length = 200)
-    private String last_name;
+    private String lastName;
 
     @NotNull
     @Column(name = "login", length = 50, unique = true)
     private String login;
 
     @NotNull
+    @Column(name = "hash_password", length = 80)
+    private String hashPassword;
+
+    @NotNull
     @ManyToOne
+    @JoinColumn(name = "role_type")
     private RoleTypeEntity roleType;
+
+    @Column(name = "bank_detail")
+    private String bankDetail;
 }
