@@ -21,9 +21,11 @@ public record RegisterResponseDto(
         @JsonProperty("middle_name")
         String middleName,
 
+        @NotNull
         String login,
 
         @JsonProperty("role")
+        @NotNull
         String roleName
 ) {
 }
