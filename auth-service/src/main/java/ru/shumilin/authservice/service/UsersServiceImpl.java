@@ -31,6 +31,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto request) {
+        log.info("Trying to register user with login: {}", request.login());
         UsersEntity usersEntity = usersRepository.findByLogin(request.login())
                 .orElse(null);
 
