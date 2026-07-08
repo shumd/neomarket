@@ -16,7 +16,9 @@ public class SecurityBeans {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequest ->
-                        authorizeHttpRequest.requestMatchers("/auth/**").permitAll())
+                        authorizeHttpRequest.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/swagger-ui/**",
+                                        "/v3/api-docs/**").permitAll())
                 .build();
     }
 
