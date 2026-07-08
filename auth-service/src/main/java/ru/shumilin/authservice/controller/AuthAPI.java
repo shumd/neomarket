@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.ErrorResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
@@ -17,7 +18,7 @@ import static ru.shumilin.authservice.util.ErrorTitleConstant.*;
 public interface AuthAPI {
     @Operation(summary = "Регистрация пользователя")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
+            @ApiResponse(responseCode = "201",
                     description = "Пользователь успешно зарегистрировался",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = RegisterResponseDto.class))),
@@ -34,5 +35,5 @@ public interface AuthAPI {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
-    RegisterResponseDto register(RegisterRequestDto request);
+    ResponseEntity<RegisterResponseDto> register(RegisterRequestDto request);
 }

@@ -44,7 +44,7 @@ public class AuthRestControllerTest {
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null, null))))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.login").value("test_login"));
     }
 
