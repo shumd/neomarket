@@ -31,9 +31,9 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto request) {
-        log.info("Trying to register user with login: {}", request.login());
+        log.info("Trying to register user with email: {}", request.email());
 
-        UsersEntity usersEntity = usersRepository.findByLogin(request.login())
+        UsersEntity usersEntity = usersRepository.findByEmail(request.email())
                 .orElse(null);
 
         if(usersEntity == null){
@@ -43,18 +43,15 @@ public class UsersServiceImpl implements UsersService {
 
             usersEntity = UsersEntity.builder()
                     .firstName(request.firstName())
-                    .middleName(request.middleName())
                     .lastName(request.lastName())
-                    .login(request.login())
+                    .email(request.email())
                     .hashPassword(passwordEncoder.encode(request.password()))
                     .roleType(customerRoleTypeEntity)
                     .build();
 
-            usersRepository.save(usersEntity);
-
-            return usersMapper.toRegisterResponseDto(usersEntity);
+            return usersMapper.toRegisterResponseDto(usersRepository.save(usersEntity));
         } else {
-            throw new LoginAlreadyClaimedException(request.login());
+            throw new LoginAlreadyClaimedException(request.email());
         }
     }
 }

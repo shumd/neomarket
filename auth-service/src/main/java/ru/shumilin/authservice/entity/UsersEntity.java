@@ -25,17 +25,14 @@ public class UsersEntity {
     @Column(name = "first_name", length = 200)
     private String firstName;
 
-    @NotNull
-    @Column(name = "middle_name", length = 200)
-    private String middleName;
 
     @NotNull
     @Column(name = "last_name", length = 200)
     private String lastName;
 
     @NotNull
-    @Column(name = "login", length = 50, unique = true)
-    private String login;
+    @Column(name = "email", length = 50, unique = true)
+    private String email;
 
     @NotNull
     @Column(name = "hash_password", length = 80)
