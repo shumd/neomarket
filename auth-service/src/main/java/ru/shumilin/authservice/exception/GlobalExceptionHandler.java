@@ -36,6 +36,13 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto(NOT_ACCEPTABLE));
     }
 
+    @ExceptionHandler(InvalidLoginDataException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidLoginData(InvalidLoginDataException e){
+        log.warn(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDto(UNAUTHORIZED));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleBase(Exception e){
         log.warn(e.getMessage());

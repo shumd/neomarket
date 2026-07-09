@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
+import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 import ru.shumilin.authservice.service.UsersService;
 
@@ -24,5 +26,11 @@ public class AuthRestController implements AuthAPI{
     public ResponseEntity<RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto request){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(usersService.register(request));
+    }
+
+    @Override
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto request) {
+        return ResponseEntity.ok(usersService.login(request));
     }
 }

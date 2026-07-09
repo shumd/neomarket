@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.ErrorResponseDto;
+import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 
 import static ru.shumilin.authservice.util.ErrorTitleConstant.*;
@@ -40,4 +42,6 @@ public interface AuthAPI {
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     ResponseEntity<RegisterResponseDto> register(RegisterRequestDto request);
+
+    ResponseEntity<LoginResponseDto> login(LoginRequestDto request);
 }
