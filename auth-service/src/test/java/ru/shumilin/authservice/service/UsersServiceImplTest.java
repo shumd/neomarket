@@ -38,6 +38,9 @@ public class UsersServiceImplTest {
     @Mock
     private UsersMapper usersMapper;
 
+    @Mock
+    private JwtService jwtService;
+
     @InjectMocks
     private UsersServiceImpl usersService;
 
@@ -86,6 +89,12 @@ public class UsersServiceImplTest {
         when(roleTypeRepository.findById(anyInt())).thenReturn(Optional.empty());
         Assertions.assertThrows(RoleTypeNotFoundException.class,
                 () -> usersService.register(getRegisterRequestDto()));
+    }
+
+    @Test
+    public void login_withValidData_returnLoginResponseDto(){
+        when(jwtService.generateToken(any())).thenReturn("test token");
+
     }
 
     private RegisterRequestDto getRegisterRequestDto(){

@@ -14,6 +14,7 @@ import ru.shumilin.authservice.entity.RoleTypeEntity;
 import ru.shumilin.authservice.entity.UsersEntity;
 import ru.shumilin.authservice.exception.LoginAlreadyClaimedException;
 import ru.shumilin.authservice.exception.RoleTypeNotFoundException;
+import ru.shumilin.authservice.exception.InvalidLoginDataException;
 import ru.shumilin.authservice.mapper.UsersMapper;
 import ru.shumilin.authservice.repository.RoleTypeRepository;
 import ru.shumilin.authservice.repository.UsersRepository;
@@ -26,6 +27,7 @@ public class UsersServiceImpl implements UsersService {
     private final RoleTypeRepository roleTypeRepository;
     private final PasswordEncoder passwordEncoder;
     private final UsersMapper usersMapper;
+    private final JwtService jwtService;
 
     @Value("${app.customer-role-type-id}")
     private int customerRoleTypeId;
@@ -61,7 +63,14 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
-        return null;
+    public LoginResponseDto login(LoginRequestDto request) {
+        UsersEntity entity = usersRepository.findByLogin(request.login())
+                .orElseThrow(() -> new InvalidLoginDataException(request.login()));
+
+        if (!passwordEncoder.matches(request.password(), entity.getHashPassword())){
+            throw new InvalidLoginDataException(request.login());
+        }
+
+        return new LoginResponseDto(jwtService.generateToken(entity));
     }
 }
