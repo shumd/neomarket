@@ -10,7 +10,7 @@ import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 import ru.shumilin.authservice.entity.RoleTypeEntity;
 import ru.shumilin.authservice.entity.UsersEntity;
-import ru.shumilin.authservice.exception.LoginAlreadyClaimedException;
+import ru.shumilin.authservice.exception.EmailAlreadyClaimedException;
 import ru.shumilin.authservice.exception.RoleTypeNotFoundException;
 import ru.shumilin.authservice.mapper.UsersMapper;
 import ru.shumilin.authservice.repository.RoleTypeRepository;
@@ -54,7 +54,7 @@ public class UsersServiceImpl implements UsersService {
 
             return usersMapper.toRegisterResponseDto(usersRepository.save(usersEntity));
         } else {
-            throw new LoginAlreadyClaimedException(request.email());
+            throw new EmailAlreadyClaimedException(request.email());
         }
     }
 }
