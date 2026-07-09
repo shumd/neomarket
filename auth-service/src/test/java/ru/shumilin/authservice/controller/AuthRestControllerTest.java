@@ -10,7 +10,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
-import ru.shumilin.authservice.config.ConfigSecurity;
+import ru.shumilin.authservice.config.SecurityConfig;
 import ru.shumilin.authservice.service.UsersService;
 import tools.jackson.databind.ObjectMapper;
 
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.shumilin.authservice.util.ErrorTitleConstant.*;
 
 @WebMvcTest(AuthRestController.class)
-@Import(ConfigSecurity.class)
+@Import(SecurityConfig.class)
 public class AuthRestControllerTest {
     @MockitoBean
     private UsersService usersService;
