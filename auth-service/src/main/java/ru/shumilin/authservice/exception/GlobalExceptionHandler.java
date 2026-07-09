@@ -47,6 +47,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleBase(Exception e){
         log.warn(e.getMessage());
         return ResponseEntity.internalServerError()
-                .body(new ErrorResponseDto(INTERNAL_SERVICE_ERROR));
+                .body(new ErrorResponseDto(INTERNAL_SERVER_ERROR));
     }
 }

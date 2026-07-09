@@ -8,9 +8,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
+import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 import ru.shumilin.authservice.config.SecurityConfig;
+import ru.shumilin.authservice.exception.InvalidLoginDataException;
 import ru.shumilin.authservice.service.UsersService;
 import tools.jackson.databind.ObjectMapper;
 
@@ -167,7 +170,139 @@ public class AuthRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null))))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").value(INTERNAL_SERVICE_ERROR));
+                .andExpect(jsonPath("$.message").value(INTERNAL_SERVER_ERROR));
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withValidRequestBody_returnLoginResponseDto(){
+        when(usersService.login(getLoginRequestDto(null, null)))
+                .thenReturn(getLoginResponseDto());
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto(null, null))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("test token"));
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withBlankEmail_return400HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto("      ", null))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withTooShortEmail_return400HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto("a".repeat(2), null))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withTooLongEmail_return400HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto("a".repeat(51), null))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withInvalidEmailCharacters_return400HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto("афвьв", null))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withBlankPassword_return400HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto(null, "     "))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withTooShortPassword_return400HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto(null, "a".repeat(7)))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withTooLongPassword_return400HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto(null, "a".repeat(73)))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_whenWrongLoginOrPassword_return401HttpCode(){
+        when(usersService.login(any())).thenThrow(InvalidLoginDataException.class);
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto(null, null))))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(UNAUTHORIZED));
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_withWrongAccept_return406HttpCode(){
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto(null, null))))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(jsonPath("$.message").value(NOT_ACCEPTABLE));
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void login_whenInternalServerError_return500HttpCode(){
+        when(usersService.login(any())).thenThrow(NullPointerException.class);
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(getLoginRequestDto(null, null))))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value(INTERNAL_SERVER_ERROR));
     }
 
     private RegisterResponseDto getRegisterResponseDto(){
@@ -189,5 +324,16 @@ public class AuthRestControllerTest {
                 firstName == null ? "test firstName" : firstName,
                 email == null ? "test_email" : email,
                 password == null ? "12345678" : password);
+    }
+
+    private LoginRequestDto getLoginRequestDto(String email, String password){
+        return new LoginRequestDto(
+                email == null ? "test_email@mail.ru" : email,
+                password == null ? "test_password" : password
+        );
+    }
+
+    private LoginResponseDto getLoginResponseDto(){
+        return new LoginResponseDto("test token");
     }
 }
