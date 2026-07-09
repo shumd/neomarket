@@ -12,14 +12,14 @@ public record RegisterRequestDto(
         @Schema(description = "Фамилия пользователя", example = "Иванов",
                 minLength = 1, maxLength = 200)
         @JsonProperty("last_name")
-        @NotBlank(message = "Last name cant be blank")
+        @NotNull
         @Size(min = 1, max = 200, message = "Size must be between 1 and 200")
         String lastName,
 
         @Schema(description = "Имя пользователя", example = "Иван",
                 minLength = 1, maxLength = 200)
         @JsonProperty("first_name")
-        @NotBlank(message = "First name cant be blank")
+        @NotNull
         @Size(min = 1, max = 200, message = "Size must be between 1 and 200")
         String firstName,
 
