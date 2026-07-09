@@ -14,8 +14,7 @@ import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 import ru.shumilin.authservice.entity.RoleTypeEntity;
 import ru.shumilin.authservice.entity.UsersEntity;
-import ru.shumilin.authservice.exception.InvalidLoginDataException;
-import ru.shumilin.authservice.exception.LoginAlreadyClaimedException;
+import ru.shumilin.authservice.exception.EmailAlreadyClaimedException;
 import ru.shumilin.authservice.exception.RoleTypeNotFoundException;
 import ru.shumilin.authservice.mapper.UsersMapper;
 import ru.shumilin.authservice.repository.RoleTypeRepository;
@@ -79,9 +78,9 @@ public class UsersServiceImplTest {
     }
 
     @Test
-    public void register_withClaimedLogin_throwLoginAlreadyClaimedException(){
+    public void register_withClaimedEmail_throwEmailAlreadyClaimedException(){
         when(usersRepository.findByEmail("email")).thenReturn(Optional.of(new UsersEntity()));
-        Assertions.assertThrows(LoginAlreadyClaimedException.class,
+        Assertions.assertThrows(EmailAlreadyClaimedException.class,
                 () -> usersService.register(getRegisterRequestDto()));
     }
 

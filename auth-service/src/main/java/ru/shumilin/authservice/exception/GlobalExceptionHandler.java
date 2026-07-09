@@ -15,8 +15,8 @@ import static ru.shumilin.authservice.util.ErrorTitleConstant.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(LoginAlreadyClaimedException.class)
-    public ResponseEntity<ErrorResponseDto> handleLoginAlreadyClaimed(LoginAlreadyClaimedException e){
+    @ExceptionHandler(EmailAlreadyClaimedException.class)
+    public ResponseEntity<ErrorResponseDto> handleEmailAlreadyClaimed(EmailAlreadyClaimedException e){
         log.warn(e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponseDto(CONFLICT));
