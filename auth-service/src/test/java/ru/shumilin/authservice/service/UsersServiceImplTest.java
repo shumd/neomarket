@@ -8,7 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
+import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
+import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 import ru.shumilin.authservice.entity.RoleTypeEntity;
 import ru.shumilin.authservice.entity.UsersEntity;
@@ -93,8 +95,37 @@ public class UsersServiceImplTest {
 
     @Test
     public void login_withValidData_returnLoginResponseDto(){
-        when(jwtService.generateToken(any())).thenReturn("test token");
+        String token = "test token";
 
+        LoginRequestDto requestDto = new LoginRequestDto(
+                "login123456",
+                "testPassword");
+
+        RoleTypeEntity roleTypeEntity = RoleTypeEntity.builder()
+                .id(1)
+                .nameType("test permission name")
+                .permissions("test permissions")
+                .activity(true)
+                .comment("test comment")
+                .build();
+
+        UsersEntity usersEntity = UsersEntity
+                .builder()
+                .id(UUID.randomUUID())
+                .firstName("test first name")
+                .middleName("test middle name")
+                .lastName("test last name")
+                .login("login123456")
+                .hashPassword("testHashPassword")
+                .roleType(roleTypeEntity)
+                .bankDetail("test bank detail")
+                .build();
+
+        when(passwordEncoder.matches("testPassword","testHashPassword")).thenReturn(true);
+        when(usersRepository.findByLogin(anyString())).thenReturn(Optional.of(usersEntity));
+        when(jwtService.generateToken(any())).thenReturn(token);
+
+        Assertions.assertEquals(new LoginResponseDto(token), usersService.login(requestDto));
     }
 
     private RegisterRequestDto getRegisterRequestDto(){
