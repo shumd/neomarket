@@ -43,9 +43,9 @@ public class AuthRestControllerTest {
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null))))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.login").value("test_login"));
+                .andExpect(jsonPath("$.email").value("test_email"));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AuthRestControllerTest {
     public void register_withEmptyLastName_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto("", null, null, null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto("", null, null, null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -64,7 +64,7 @@ public class AuthRestControllerTest {
     public void register_withTooLongLastName_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto("a".repeat(201), null, null, null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto("a".repeat(201), null, null, null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -75,7 +75,7 @@ public class AuthRestControllerTest {
     public void register_withEmptyFirstName_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, "", null, null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, "", null, null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -86,7 +86,7 @@ public class AuthRestControllerTest {
     public void register_withTooLongFirstName_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, "a".repeat(201), null, null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, "a".repeat(201), null, null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -94,22 +94,10 @@ public class AuthRestControllerTest {
 
     @Test
     @SneakyThrows
-    public void register_withEmptyMiddleName_returnRegisterResponseDto(){
-        when(usersService.register(any())).thenReturn(getRegisterResponseDto());
-
+    public void register_withEmailLessThan3_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, "", null, null))))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.login").value("test_login"));
-    }
-
-    @Test
-    @SneakyThrows
-    public void register_withTooLongMiddleName_return400HttpCode(){
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, "a".repeat(201), null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, "a".repeat(2), null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -117,10 +105,10 @@ public class AuthRestControllerTest {
 
     @Test
     @SneakyThrows
-    public void register_withLoginLessThan3_return400HttpCode(){
+    public void register_withTooLongEmail_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, "a".repeat(2), null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, "a".repeat(51), null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -128,21 +116,10 @@ public class AuthRestControllerTest {
 
     @Test
     @SneakyThrows
-    public void register_withTooLongLogin_return400HttpCode(){
+    public void register_withInvalidEmailCharacters_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, "a".repeat(51), null))))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(BAD_REQUEST));
-        verifyNoInteractions(usersService);
-    }
-
-    @Test
-    @SneakyThrows
-    public void register_withInvalidLoginCharacters_return400HttpCode(){
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, "Абгдфы", null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, "Абгдфы", null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -153,7 +130,7 @@ public class AuthRestControllerTest {
     public void register_withPasswordLessThan8_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null, "a".repeat(7)))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, "a".repeat(7)))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -164,7 +141,7 @@ public class AuthRestControllerTest {
     public void register_withTooLongPassword_return400HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null, "a".repeat(73)))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, "a".repeat(73)))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(BAD_REQUEST));
         verifyNoInteractions(usersService);
@@ -175,7 +152,7 @@ public class AuthRestControllerTest {
     public void register_withWrongAccept_return406HttpCode(){
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_PDF)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null))))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(jsonPath("$.message").value(NOT_ACCEPTABLE));
         verifyNoInteractions(usersService);
@@ -188,7 +165,7 @@ public class AuthRestControllerTest {
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null, null))))
+                        .content(objectMapper.writeValueAsString(getRegisterRequestDto(null, null, null, null))))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value(INTERNAL_SERVICE_ERROR));
     }
@@ -198,22 +175,19 @@ public class AuthRestControllerTest {
                 UUID.randomUUID(),
                 "test lastName",
                 "test firstName",
-                "test middleName",
-                "test_login",
+                "test_email",
                 "test roleName"
         );
     }
 
     private RegisterRequestDto getRegisterRequestDto(String lastName,
                                                      String firstName,
-                                                     String middleName,
-                                                     String login,
+                                                     String email,
                                                      String password){
         return new RegisterRequestDto(
                 lastName == null ? "test lastName" : lastName,
                 firstName == null ? "test firstName" : firstName,
-                middleName == null ? "test middleName" : middleName,
-                login == null ? "test_login" : login,
+                email == null ? "test_email" : email,
                 password == null ? "12345678" : password);
     }
 }

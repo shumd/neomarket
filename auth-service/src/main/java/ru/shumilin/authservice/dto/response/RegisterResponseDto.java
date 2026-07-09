@@ -2,6 +2,7 @@ package ru.shumilin.authservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
@@ -15,26 +16,22 @@ public record RegisterResponseDto(
         UUID id,
 
         @Schema(description = "Фамилия пользователя", example = "Иванов")
-        @NotNull
+        @NotBlank(message = "Last name cant be blank")
         @JsonProperty("last_name")
         String lastName,
 
         @Schema(description = "Имя пользователя", example = "Иван")
-        @NotNull
+        @NotBlank(message = "First name cant be blank")
         @JsonProperty("first_name")
         String firstName,
 
-        @Schema(description = "Отчество пользователя", example = "Иванович")
-        @JsonProperty("middle_name")
-        String middleName,
-
-        @Schema(description = "Логин", example = "ivan_ivanov")
-        @NotNull
-        String login,
+        @Schema(description = "Почта", example = "ivan_ivanov@mail.ru")
+        @NotBlank(message = "Email cant be blank")
+        String email,
 
         @Schema(description = "Название роли", example = "Customer")
         @JsonProperty("role")
-        @NotNull
+        @NotBlank(message = "Role name cant be blank")
         String roleName
 ) {
 }

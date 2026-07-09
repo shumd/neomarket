@@ -67,11 +67,10 @@ public class UsersServiceImplTest {
                 UUID.randomUUID(),
                 "Ivanov",
                 "Ivan",
-                "Ivanovich",
-                "test",
+                "email",
                 "customer");
 
-        when(usersRepository.findByLogin("test")).thenReturn(Optional.empty());
+        when(usersRepository.findByEmail("email")).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("encoded password");
         when(roleTypeRepository.findById(customerRoleTypeId)).thenReturn(Optional.of(roleTypeEntity));
         when(usersMapper.toRegisterResponseDto(any())).thenReturn(registerResponseDto);
@@ -81,17 +80,23 @@ public class UsersServiceImplTest {
 
     @Test
     public void register_withClaimedLogin_throwLoginAlreadyClaimedException(){
-        when(usersRepository.findByLogin("test")).thenReturn(Optional.of(new UsersEntity()));
+        when(usersRepository.findByEmail("email")).thenReturn(Optional.of(new UsersEntity()));
         Assertions.assertThrows(LoginAlreadyClaimedException.class,
                 () -> usersService.register(getRegisterRequestDto()));
     }
 
     @Test
     public void register_whenCustomerRoleTypeNotFound_throwRoleTypeNotFound(){
-        when(usersRepository.findByLogin("test")).thenReturn(Optional.empty());
+        when(usersRepository.findByEmail("email")).thenReturn(Optional.empty());
         when(roleTypeRepository.findById(anyInt())).thenReturn(Optional.empty());
         Assertions.assertThrows(RoleTypeNotFoundException.class,
                 () -> usersService.register(getRegisterRequestDto()));
+    }
+
+    @Test
+    void register_withNullRequest_throwIllegalArgumentException(){
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> usersService.register(null));
     }
 
     @Test
@@ -173,8 +178,7 @@ public class UsersServiceImplTest {
         return new RegisterRequestDto(
                 "Ivanov",
                 "Ivan",
-                "Ivanovich",
-                "test",
+                "email",
                 "123");
     }
 }
