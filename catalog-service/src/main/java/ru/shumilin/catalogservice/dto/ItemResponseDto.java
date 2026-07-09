@@ -1,6 +1,7 @@
 package ru.shumilin.catalogservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 

@@ -15,7 +15,7 @@ import ru.shumilin.catalogservice.repository.CategoryRepository;
 
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyInt;import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceImplTest {
@@ -29,31 +29,34 @@ public class CategoryServiceImplTest {
     @InjectMocks
     private CategoryServiceImpl categoryService;
 
+    private final int activeStatusId = 1;
+
     @Test
-    void findAll_whenRepositoryReturnEntitiesWithValidCategoryId_returnSortedResponseDtoList() {
-        ReflectionTestUtils.setField(categoryService, "activeStatusId", 1);
+    void findAll_WithActiveStatusId_whenRepositoryReturnEntitiesWithValidCategoryId_returnSortedResponseDtoList() {
+        ReflectionTestUtils.setField(categoryService, "activeStatusId", activeStatusId);
 
         CategoryEntity firstEntity = CategoryEntity.builder()
-                .id(1).name("B").statusId(1).comment("comm").build();
+                .id(1).name("A").statusId(1).comment("comm").build();
         CategoryEntity secondEntity = CategoryEntity.builder()
-                .id(2).name("A").statusId(1).comment("comm").build();
+                .id(2).name("B").statusId(1).comment("comm").build();
 
-        CategoryResponseDto firstResponseDto = new CategoryResponseDto("1", "B");
-        CategoryResponseDto secondResponseDto = new CategoryResponseDto("2", "A");
+        CategoryResponseDto firstResponseDto = new CategoryResponseDto("1", "A");
+        CategoryResponseDto secondResponseDto = new CategoryResponseDto("2", "B");
 
         when(categoryMapper.toResponseDto(firstEntity)).thenReturn(firstResponseDto);
         when(categoryMapper.toResponseDto(secondEntity)).thenReturn(secondResponseDto);
 
-        when(categoryRepository.findAll()).thenReturn(List.of(firstEntity, secondEntity));
+        when(categoryRepository.findAllByStatusIdOrderByNameAsc(activeStatusId)).thenReturn(List.of(firstEntity, secondEntity));
 
-        Assertions.assertEquals(new CategoryListResponseDto(List.of(secondResponseDto, firstResponseDto)),
-                categoryService.findAll());
+        Assertions.assertEquals(new CategoryListResponseDto(List.of(firstResponseDto, secondResponseDto)),
+                categoryService.findAllWithActiveStatusId());
     }
 
     @Test
-    void findAll_whenRepositoryReturnEmptyList_returnEmptyResponseDtoList() {
-        when(categoryRepository.findAll()).thenReturn(List.of());
+    void findAll_WithActiveStatusId_whenRepositoryReturnEmptyList_returnEmptyResponseDtoList() {
+        ReflectionTestUtils.setField(categoryService, "activeStatusId", activeStatusId);
+        when(categoryRepository.findAllByStatusIdOrderByNameAsc(anyInt())).thenReturn(List.of());
 
-        Assertions.assertEquals(new CategoryListResponseDto(List.of()), categoryService.findAll());
+        Assertions.assertEquals(new CategoryListResponseDto(List.of()), categoryService.findAllWithActiveStatusId());
     }
 }

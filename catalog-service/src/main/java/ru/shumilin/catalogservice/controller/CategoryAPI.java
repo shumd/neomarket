@@ -12,6 +12,7 @@ import ru.shumilin.catalogservice.dto.CategoryListResponseDto;
 import ru.shumilin.catalogservice.dto.ErrorResponseDto;
 
 import static ru.shumilin.catalogservice.util.ErrorTitleConstant.INTERNAL_SERVER_ERROR;
+import static ru.shumilin.catalogservice.util.ErrorTitleConstant.NOT_ACCEPTABLE;
 
 @Tag(name = "category-controller", description = "Взаимодействие с категориями")
 public interface CategoryAPI {
@@ -20,10 +21,13 @@ public interface CategoryAPI {
             @ApiResponse(responseCode = "200", description = "Список категорий успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CategoryListResponseDto.class))),
+            @ApiResponse(responseCode = "406", description = NOT_ACCEPTABLE,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = INTERNAL_SERVER_ERROR,
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
-    ResponseEntity<CategoryListResponseDto> findAll();
+    ResponseEntity<CategoryListResponseDto> findAllWithActiveStatusId();
 }

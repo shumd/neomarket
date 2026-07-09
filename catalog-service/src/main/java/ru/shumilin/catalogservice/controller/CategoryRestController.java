@@ -18,7 +18,7 @@ public class CategoryRestController implements CategoryAPI{
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoryListResponseDto> findAll(){
-        return ResponseEntity.ok(categoryService.findAll());
+    public ResponseEntity<CategoryListResponseDto> findAllWithActiveStatusId(){
+        return ResponseEntity.ok(categoryService.findAllWithActiveStatusId());
     }
 }

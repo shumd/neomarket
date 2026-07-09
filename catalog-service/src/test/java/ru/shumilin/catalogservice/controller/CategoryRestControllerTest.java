@@ -27,21 +27,21 @@ public class CategoryRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findAll_withValidServiceReturnData_return200HttpCode(){
-        when(categoryService.findAll())
+    void findAll_WithActiveStatusId_withValidServiceReturnData_return200HttpCode(){
+        when(categoryService.findAllWithActiveStatusId())
                 .thenReturn(new CategoryListResponseDto(new ArrayList<>()));
 
         mockMvc.perform(get("/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.categories").isArray());
 
-        verify(categoryService, times(1)).findAll();
+        verify(categoryService, times(1)).findAllWithActiveStatusId();
     }
 
     @Test
     @SneakyThrows
-    void findAll_whenAcceptHeaderNotContainsJson_return406HttpCode(){
-        when(categoryService.findAll())
+    void findAll_WithActiveStatusId_whenAcceptHeaderNotContainsJson_return406HttpCode(){
+        when(categoryService.findAllWithActiveStatusId())
                 .thenReturn(new CategoryListResponseDto(new ArrayList<>()));
 
         mockMvc.perform(get("/categories").accept(MediaType.APPLICATION_PDF))
@@ -51,8 +51,8 @@ public class CategoryRestControllerTest {
 
     @Test
     @SneakyThrows
-    void findAll_whenServerError_return500HttpCode(){
-        when(categoryService.findAll())
+    void findAll_WithActiveStatusId_whenServerError_return500HttpCode(){
+        when(categoryService.findAllWithActiveStatusId())
                 .thenThrow(new NullPointerException());
 
         mockMvc.perform(get("/categories"))
