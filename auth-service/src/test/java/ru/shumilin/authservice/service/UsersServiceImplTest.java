@@ -87,6 +87,12 @@ public class UsersServiceImplTest {
                 () -> usersService.register(getRegisterRequestDto()));
     }
 
+    @Test
+    void register_withNullRequest_throwIllegalArgumentException(){
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> usersService.register(null));
+    }
+
     private RegisterRequestDto getRegisterRequestDto(){
         return new RegisterRequestDto(
                 "Ivanov",

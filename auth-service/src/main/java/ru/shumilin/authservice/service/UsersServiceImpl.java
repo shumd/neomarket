@@ -31,6 +31,9 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto request) {
+        if(request == null)
+            throw new IllegalArgumentException("Request cant be null");
+
         log.info("Trying to register user with email: {}", request.email());
 
         UsersEntity usersEntity = usersRepository.findByEmail(request.email())
