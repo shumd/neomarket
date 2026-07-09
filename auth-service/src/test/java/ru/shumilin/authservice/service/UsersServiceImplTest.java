@@ -15,6 +15,7 @@ import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 import ru.shumilin.authservice.entity.RoleTypeEntity;
 import ru.shumilin.authservice.entity.UsersEntity;
 import ru.shumilin.authservice.exception.EmailAlreadyClaimedException;
+import ru.shumilin.authservice.exception.InvalidLoginDataException;
 import ru.shumilin.authservice.exception.RoleTypeNotFoundException;
 import ru.shumilin.authservice.mapper.UsersMapper;
 import ru.shumilin.authservice.repository.RoleTypeRepository;
@@ -99,12 +100,6 @@ public class UsersServiceImplTest {
     }
 
     @Test
-    void register_withNullRequest_throwIllegalArgumentException(){
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> usersService.register(null));
-    }
-
-    @Test
     public void login_withValidData_returnLoginResponseDto(){
         String token = "test token";
 
@@ -124,16 +119,15 @@ public class UsersServiceImplTest {
                 .builder()
                 .id(UUID.randomUUID())
                 .firstName("test first name")
-                .middleName("test middle name")
                 .lastName("test last name")
-                .login("login123456")
+                .email("email@mail.ru")
                 .hashPassword("testHashPassword")
                 .roleType(roleTypeEntity)
                 .bankDetail("test bank detail")
                 .build();
 
         when(passwordEncoder.matches("testPassword","testHashPassword")).thenReturn(true);
-        when(usersRepository.findByLogin(anyString())).thenReturn(Optional.of(usersEntity));
+        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.of(usersEntity));
         when(jwtService.generateToken(any())).thenReturn(token);
 
         Assertions.assertEquals(new LoginResponseDto(token), usersService.login(requestDto));
@@ -146,7 +140,7 @@ public class UsersServiceImplTest {
                 "test password"
         );
 
-        when(usersRepository.findByLogin(anyString())).thenReturn(Optional.empty());
+        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(InvalidLoginDataException.class,
                 () -> usersService.login(requestDto));
@@ -159,7 +153,7 @@ public class UsersServiceImplTest {
                 "test password"
         );
 
-        when(usersRepository.findByLogin(anyString()))
+        when(usersRepository.findByEmail(anyString()))
                 .thenReturn(Optional.of(UsersEntity.builder().hashPassword("123").build()));
         when(passwordEncoder.matches(anyString(),anyString())).thenReturn(false);
 

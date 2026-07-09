@@ -27,7 +27,7 @@ public class JwtServiceTest {
 
     @Test
     void generateToken_withValidEntity_returnToken(){
-        String login = "test login";
+        String email = "test_email@mail.ru";
         String permission = "test permission";
 
         RoleTypeEntity roleTypeEntity = RoleTypeEntity.builder()
@@ -41,9 +41,8 @@ public class JwtServiceTest {
                 .builder()
                 .id(UUID.randomUUID())
                 .firstName("test first name")
-                .middleName("test middle name")
                 .lastName("test last name")
-                .login(login)
+                .email(email)
                 .hashPassword("test hash password")
                 .roleType(roleTypeEntity)
                 .bankDetail("test bank detail")
@@ -57,7 +56,7 @@ public class JwtServiceTest {
                 .parseSignedClaims(token)
                 .getPayload();
 
-        Assertions.assertEquals(login, claims.getSubject());
+        Assertions.assertEquals(email, claims.getSubject());
         Assertions.assertEquals(permission, claims.get("role"));
     }
 

@@ -25,7 +25,7 @@ public class JwtService {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
-                .subject(usersEntity.getLogin())
+                .subject(usersEntity.getEmail())
                 .claim("role", usersEntity.getRoleType().getPermissions())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))

@@ -66,13 +66,13 @@ public class UsersServiceImpl implements UsersService {
     public LoginResponseDto login(LoginRequestDto request) {
         if(request == null) throw new IllegalArgumentException("Request cant be null");
 
-        log.info("Trying to login user with login: {}", request.login()); // Лучше же не вносить в лог пароль?
+        log.info("Trying to login user with email: {}", request.email()); // Лучше же не вносить в лог пароль?
 
-        UsersEntity entity = usersRepository.findByLogin(request.login())
-                .orElseThrow(() -> new InvalidLoginDataException(request.login()));
+        UsersEntity entity = usersRepository.findByEmail(request.email())
+                .orElseThrow(() -> new InvalidLoginDataException(request.email()));
 
         if (!passwordEncoder.matches(request.password(), entity.getHashPassword())){
-            throw new InvalidLoginDataException(request.login());
+            throw new InvalidLoginDataException(request.email());
         }
 
         return new LoginResponseDto(jwtService.generateToken(entity));
