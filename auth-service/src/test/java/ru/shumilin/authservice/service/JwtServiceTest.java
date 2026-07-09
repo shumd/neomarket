@@ -60,4 +60,9 @@ public class JwtServiceTest {
         Assertions.assertEquals(login, claims.getSubject());
         Assertions.assertEquals(permission, claims.get("role"));
     }
+
+    @Test
+    void generateToken_withNullEntity_throwIllegalArgumentException(){
+        Assertions.assertThrows(IllegalArgumentException.class, () -> jwtService.generateToken(null));
+    }
 }
