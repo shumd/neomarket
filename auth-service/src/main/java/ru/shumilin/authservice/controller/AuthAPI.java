@@ -37,11 +37,34 @@ public interface AuthAPI {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponseDto.class))),
             @ApiResponse(responseCode = "500",
-                    description = INTERNAL_SERVICE_ERROR,
+                    description = INTERNAL_SERVER_ERROR,
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     ResponseEntity<RegisterResponseDto> register(RegisterRequestDto request);
 
+    @Operation(summary = "Аутентификация пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Пользователь успешно аутентификацировался",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = LoginResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = BAD_REQUEST,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = UNAUTHORIZED,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "406",
+                    description = NOT_ACCEPTABLE,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+    })
     ResponseEntity<LoginResponseDto> login(LoginRequestDto request);
 }

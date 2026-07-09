@@ -17,7 +17,7 @@ public record LoginRequestDto(
                 regexp = "^[a-zA-Z0-9_@.]+$",
                 message = "Email can contain only letters, numbers, @, dot and underscore"
         )
-        String email, //TODO написать комментарий что ТЗ пока не поправили
+        String email,
 
         @Schema(description = "Пароль пользователя", example = "password123")
         @NotEmpty(message = "Password can`t be empty")
