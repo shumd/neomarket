@@ -15,7 +15,8 @@ import ru.shumilin.catalogservice.repository.CategoryRepository;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyInt;import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceImplTest {
