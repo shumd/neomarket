@@ -14,6 +14,7 @@ import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 import ru.shumilin.authservice.entity.RoleTypeEntity;
 import ru.shumilin.authservice.entity.UsersEntity;
+import ru.shumilin.authservice.exception.InvalidLoginDataException;
 import ru.shumilin.authservice.exception.LoginAlreadyClaimedException;
 import ru.shumilin.authservice.exception.RoleTypeNotFoundException;
 import ru.shumilin.authservice.mapper.UsersMapper;
@@ -94,6 +95,12 @@ public class UsersServiceImplTest {
     }
 
     @Test
+    void register_withNullRequest_throwIllegalArgumentException(){
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> usersService.register(null));
+    }
+
+    @Test
     public void login_withValidData_returnLoginResponseDto(){
         String token = "test token";
 
@@ -126,6 +133,40 @@ public class UsersServiceImplTest {
         when(jwtService.generateToken(any())).thenReturn(token);
 
         Assertions.assertEquals(new LoginResponseDto(token), usersService.login(requestDto));
+    }
+
+    @Test
+    void login_withWrongLogin_throwInvalidLoginDataException(){
+        LoginRequestDto requestDto = new LoginRequestDto(
+                "test",
+                "test password"
+        );
+
+        when(usersRepository.findByLogin(anyString())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(InvalidLoginDataException.class,
+                () -> usersService.login(requestDto));
+    }
+
+    @Test
+    void login_withWrongPassword_throwInvalidLoginDataException(){
+        LoginRequestDto requestDto = new LoginRequestDto(
+                "test",
+                "test password"
+        );
+
+        when(usersRepository.findByLogin(anyString()))
+                .thenReturn(Optional.of(UsersEntity.builder().hashPassword("123").build()));
+        when(passwordEncoder.matches(anyString(),anyString())).thenReturn(false);
+
+        Assertions.assertThrows(InvalidLoginDataException.class,
+                () -> usersService.login(requestDto));
+    }
+
+    @Test
+    void login_withNullRequest_throwIllegalArgumentException(){
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> usersService.login(null));
     }
 
     private RegisterRequestDto getRegisterRequestDto(){

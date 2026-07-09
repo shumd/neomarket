@@ -35,6 +35,8 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto request) {
+        if(request == null) throw new IllegalArgumentException("Request cant be null");
+
         log.info("Trying to register user with login: {}", request.login());
 
         UsersEntity usersEntity = usersRepository.findByLogin(request.login())
@@ -64,6 +66,10 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto request) {
+        if(request == null) throw new IllegalArgumentException("Request cant be null");
+
+        log.info("Trying to login user with login: {}", request.login()); // Лучше же не вносить в лог пароль?
+
         UsersEntity entity = usersRepository.findByLogin(request.login())
                 .orElseThrow(() -> new InvalidLoginDataException(request.login()));
 
