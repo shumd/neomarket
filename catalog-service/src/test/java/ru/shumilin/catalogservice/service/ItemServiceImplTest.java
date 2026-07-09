@@ -15,7 +15,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import ru.shumilin.catalogservice.dto.ItemPageResponseDto;
 import ru.shumilin.catalogservice.dto.ItemResponseDto;
 import ru.shumilin.catalogservice.dto.ItemWithSupplierResponseDto;
-import ru.shumilin.catalogservice.model.SortType;
 import ru.shumilin.catalogservice.model.entity.ItemEntity;
 import ru.shumilin.catalogservice.exception.ItemNotFoundException;
 import ru.shumilin.catalogservice.mapper.ItemMapper;
@@ -118,6 +117,6 @@ public class ItemServiceImplTest {
         when(itemMapper.toPageResponseDto(any())).thenReturn(itemPageResponseDto);
 
         Assertions.assertEquals(itemPageResponseDto,
-                itemService.findAllByName(1,"item", SortType.ID_ASC,5,0));
+                itemService.findAllByName(1,"item", null,5,0));
     }
 }
