@@ -25,9 +25,8 @@ public class UsersMapperTest {
         UsersEntity usersEntity = UsersEntity.builder()
                 .id(uuid)
                 .firstName("test firstName")
-                .middleName("test middleName")
                 .lastName("test lastName")
-                .login("test login")
+                .email("test email")
                 .hashPassword("123")
                 .roleType(roleType)
                 .build();
@@ -35,8 +34,7 @@ public class UsersMapperTest {
                 uuid,
                 "test lastName",
                 "test firstName",
-                "test middleName",
-                "test login",
+                "test email",
                 "Customer"
         );
 
