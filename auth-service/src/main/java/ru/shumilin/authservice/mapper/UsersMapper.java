@@ -1,0 +1,22 @@
+package ru.shumilin.authservice.mapper;
+
+import org.springframework.stereotype.Component;
+import ru.shumilin.authservice.dto.response.RegisterResponseDto;
+import ru.shumilin.authservice.entity.UsersEntity;
+
+@Component
+public class UsersMapper {
+
+    public RegisterResponseDto toRegisterResponseDto(UsersEntity entity){
+        if(entity.getRoleType() == null
+                || entity.getRoleType().getNameType() == null) throw new IllegalArgumentException();
+
+        return new RegisterResponseDto(
+                entity.getId(),
+                entity.getLastName(),
+                entity.getFirstName(),
+                entity.getEmail(),
+                entity.getRoleType().getNameType()
+        );
+    }
+}
