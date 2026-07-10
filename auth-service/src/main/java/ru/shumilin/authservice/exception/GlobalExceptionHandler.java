@@ -50,6 +50,20 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto(UNAUTHORIZED));
     }
 
+    @ExceptionHandler(InvalidUpdateBankDetailDataException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidUpdateBankDetailData(InvalidUpdateBankDetailDataException e){
+        log.warn(e.getMessage());
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseDto(BAD_REQUEST));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(UserNotFoundException e){
+        log.warn(e.getMessage());
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseDto(BAD_REQUEST));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleBase(Exception e){
         log.warn(e.getMessage());

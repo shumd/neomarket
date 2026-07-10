@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
+import ru.shumilin.authservice.dto.request.UpdateBankDetailRequestDto;
 import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.LogoutResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
+import ru.shumilin.authservice.dto.response.UpdateBankDetailResponseDto;
+import ru.shumilin.authservice.exception.*;
 import ru.shumilin.authservice.model.LogoutStatus;
 import ru.shumilin.authservice.model.entity.RoleTypeEntity;
 import ru.shumilin.authservice.model.entity.UsersEntity;
-import ru.shumilin.authservice.exception.EmailAlreadyClaimedException;
-import ru.shumilin.authservice.exception.RoleTypeNotFoundException;
-import ru.shumilin.authservice.exception.InvalidLoginDataException;
 import ru.shumilin.authservice.mapper.UsersMapper;
 import ru.shumilin.authservice.repository.RoleTypeRepository;
 import ru.shumilin.authservice.repository.UsersRepository;
@@ -85,5 +85,25 @@ public class UsersServiceImpl implements UsersService {
         return new LogoutResponseDto(
                 "Вы успешно вышли из системы", // Надо ли message вынести в отдельное статическое поле, как ErrorTitleConstant?
                 LogoutStatus.SUCCESS);
+    }
+
+    @Override
+    @Transactional
+    public UpdateBankDetailResponseDto updateBankDetail(String email, UpdateBankDetailRequestDto request) {
+        if(email == null || email.isBlank())
+            throw new InvalidUpdateBankDetailDataException("Email cant be blank");
+
+        if(request == null || request.bankDetail() == null || request.bankDetail().isBlank()){
+            throw new InvalidUpdateBankDetailDataException("UpdateBankDetailRequestDto cant be blank");
+        }
+
+        log.info("Trying to update bank detail for user: {}", email);
+
+        UsersEntity usersEntity = usersRepository.findByEmail(email).
+                orElseThrow(() -> new UserNotFoundException(email));
+
+        usersEntity.setBankDetail(request.bankDetail());
+
+        return new UpdateBankDetailResponseDto(usersRepository.save(usersEntity).getBankDetail());
     }
 }

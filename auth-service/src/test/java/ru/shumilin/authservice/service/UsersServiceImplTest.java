@@ -10,15 +10,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
+import ru.shumilin.authservice.dto.request.UpdateBankDetailRequestDto;
 import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.LogoutResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
+import ru.shumilin.authservice.dto.response.UpdateBankDetailResponseDto;
+import ru.shumilin.authservice.exception.*;
 import ru.shumilin.authservice.model.LogoutStatus;
 import ru.shumilin.authservice.model.entity.RoleTypeEntity;
 import ru.shumilin.authservice.model.entity.UsersEntity;
-import ru.shumilin.authservice.exception.EmailAlreadyClaimedException;
-import ru.shumilin.authservice.exception.InvalidLoginDataException;
-import ru.shumilin.authservice.exception.RoleTypeNotFoundException;
 import ru.shumilin.authservice.mapper.UsersMapper;
 import ru.shumilin.authservice.repository.RoleTypeRepository;
 import ru.shumilin.authservice.repository.UsersRepository;
@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UsersServiceImplTest {
@@ -109,27 +109,8 @@ public class UsersServiceImplTest {
                 "login123456",
                 "testPassword");
 
-        RoleTypeEntity roleTypeEntity = RoleTypeEntity.builder()
-                .id(1)
-                .nameType("test permission name")
-                .permissions("test permissions")
-                .activity(true)
-                .comment("test comment")
-                .build();
-
-        UsersEntity usersEntity = UsersEntity
-                .builder()
-                .id(UUID.randomUUID())
-                .firstName("test first name")
-                .lastName("test last name")
-                .email("email@mail.ru")
-                .hashPassword("testHashPassword")
-                .roleType(roleTypeEntity)
-                .bankDetail("test bank detail")
-                .build();
-
         when(passwordEncoder.matches("testPassword","testHashPassword")).thenReturn(true);
-        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.of(usersEntity));
+        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.of(getUsersEntity()));
         when(jwtService.generateToken(any())).thenReturn(token);
 
         Assertions.assertEquals(new LoginResponseDto(token), usersService.login(requestDto));
@@ -172,6 +153,74 @@ public class UsersServiceImplTest {
     @Test
     void logout_returnLogoutResponseDto(){
         Assertions.assertEquals(getLogoutResponseDto(), usersService.logout());
+    }
+
+    @Test
+    void updateBankDetail_withValidEmailAndRequestDto_returnUpdateBankDetailResponseDto(){
+        String testBankDetail = "1234";
+
+        UsersEntity usersEntity = getUsersEntity();
+
+        UsersEntity usersEntityWithBankDetail = getUsersEntity();
+        usersEntityWithBankDetail.setBankDetail(testBankDetail);
+
+        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.of(usersEntity));
+        when(usersRepository.save(any())).thenReturn(usersEntityWithBankDetail);
+
+        Assertions.assertEquals(new UpdateBankDetailResponseDto(testBankDetail),
+                usersService.updateBankDetail("test", new UpdateBankDetailRequestDto(testBankDetail)));
+    }
+
+    @Test
+    void updateBankDetail_withNullEmail_throwInvalidUpdateBankDetailDataException(){
+        Assertions.assertThrows(InvalidUpdateBankDetailDataException.class,
+                () -> usersService.updateBankDetail(null, new UpdateBankDetailRequestDto("test")));
+    }
+
+    @Test
+    void updateBankDetail_withBlankEmail_throwInvalidUpdateBankDetailDataException(){
+        Assertions.assertThrows(InvalidUpdateBankDetailDataException.class,
+                () -> usersService.updateBankDetail("     ", new UpdateBankDetailRequestDto("test")));
+    }
+
+    @Test
+    void updateBankDetail_withNullRequestDto_throwInvalidUpdateBankDetailDataException(){
+        Assertions.assertThrows(InvalidUpdateBankDetailDataException.class,
+                () -> usersService.updateBankDetail("test", null));
+    }
+
+    @Test
+    void updateBankDetail_withBlankRequestDto_throwInvalidUpdateBankDetailDataException(){
+        Assertions.assertThrows(InvalidUpdateBankDetailDataException.class,
+                () -> usersService.updateBankDetail("test", new UpdateBankDetailRequestDto("    ")));
+    }
+
+    @Test
+    void updateBankDetail_whenUserNotFound_throwUserNotFoundException(){
+        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(UserNotFoundException.class,
+                () -> usersService.updateBankDetail("test", new UpdateBankDetailRequestDto("test")));
+    }
+
+    private UsersEntity getUsersEntity(){
+        RoleTypeEntity roleTypeEntity = RoleTypeEntity.builder()
+                .id(1)
+                .nameType("test permission name")
+                .permissions("test permissions")
+                .activity(true)
+                .comment("test comment")
+                .build();
+
+        return UsersEntity.builder()
+                .id(UUID.randomUUID())
+                .firstName("test first name")
+                .lastName("test last name")
+                .email("email@mail.ru")
+                .hashPassword("testHashPassword")
+                .roleType(roleTypeEntity)
+                .bankDetail("test bank detail")
+                .build();
     }
 
     private RegisterRequestDto getRegisterRequestDto(){
