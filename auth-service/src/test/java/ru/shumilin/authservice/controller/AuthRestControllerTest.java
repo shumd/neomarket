@@ -3,32 +3,36 @@ package ru.shumilin.authservice.controller;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.LoginResponseDto;
+import ru.shumilin.authservice.dto.response.LogoutResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
-import ru.shumilin.authservice.config.SecurityConfig;
 import ru.shumilin.authservice.exception.InvalidLoginDataException;
+import ru.shumilin.authservice.model.LogoutStatus;
+import ru.shumilin.authservice.service.JwtServiceTest;
 import ru.shumilin.authservice.service.UsersService;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.Date;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.shumilin.authservice.util.ErrorTitleConstant.*;
 
-@WebMvcTest(AuthRestController.class)
-@Import(SecurityConfig.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("local")
 public class AuthRestControllerTest {
     @MockitoBean
     private UsersService usersService;
@@ -301,6 +305,68 @@ public class AuthRestControllerTest {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(getLoginRequestDto(null, null))))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value(INTERNAL_SERVER_ERROR));
+    }
+
+    @Test
+    @SneakyThrows
+    public void logout_withValidToken_returnLogoutResponseDto(){
+        String token = new JwtServiceTest().getToken(null, null);
+
+        when(usersService.logout())
+                .thenReturn(new LogoutResponseDto("test", LogoutStatus.SUCCESS));
+
+        mockMvc.perform(post("/auth/logout")
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("test"))
+                .andExpect(jsonPath("$.status").value(LogoutStatus.SUCCESS.value()));
+
+        verify(usersService, times(1)).logout();
+    }
+
+    @Test
+    @SneakyThrows
+    public void logout_withInvalidToken_return401HttpCode(){
+        String token = new JwtServiceTest()
+                .getToken(new Date(System.currentTimeMillis()-1000), null);
+
+        mockMvc.perform(post("/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(UNAUTHORIZED));
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void logout_withInvalidAccept_return406HttpCode(){
+        String token = new JwtServiceTest()
+                .getToken(null, null);
+
+        mockMvc.perform(post("/auth/logout")
+                        .accept(MediaType.APPLICATION_PDF)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotAcceptable());
+
+        verifyNoInteractions(usersService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void logout_whenInternalServerError_return500HttpCode(){
+        String token = new JwtServiceTest()
+                .getToken(null, null);
+
+        when(usersService.logout()).thenThrow(NullPointerException.class);
+
+        mockMvc.perform(post("/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value(INTERNAL_SERVER_ERROR));
     }

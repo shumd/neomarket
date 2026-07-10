@@ -140,7 +140,7 @@ public class JwtServiceTest {
                                 Keys.hmacShaKeyFor(invalidSecret.getBytes(StandardCharsets.UTF_8)))));
     }
 
-    private String getToken(Date expiration, SecretKey secretKey){
+    public String getToken(Date expiration, SecretKey secretKey){
         SecretKey key = secretKey == null ?
                 Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)) : secretKey;
         Date expDate = expiration == null ?

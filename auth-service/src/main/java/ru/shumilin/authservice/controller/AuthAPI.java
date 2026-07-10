@@ -12,6 +12,7 @@ import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.ErrorResponseDto;
 import ru.shumilin.authservice.dto.response.LoginResponseDto;
+import ru.shumilin.authservice.dto.response.LogoutResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 
 import static ru.shumilin.authservice.util.ErrorTitleConstant.*;
@@ -67,4 +68,29 @@ public interface AuthAPI {
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
     ResponseEntity<LoginResponseDto> login(LoginRequestDto request);
+
+    @Operation(summary = "Выход пользователя из системы")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Пользователь успешно вышел из системы",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = LogoutResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = BAD_REQUEST,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = UNAUTHORIZED,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "406",
+                    description = NOT_ACCEPTABLE,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500",
+                    description = INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+    })
+    ResponseEntity<LogoutResponseDto> logout();
 }
