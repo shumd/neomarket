@@ -13,7 +13,6 @@ import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.LogoutResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
-import ru.shumilin.authservice.exception.InvalidTokenException;
 import ru.shumilin.authservice.model.LogoutStatus;
 import ru.shumilin.authservice.model.entity.RoleTypeEntity;
 import ru.shumilin.authservice.model.entity.UsersEntity;
@@ -171,16 +170,8 @@ public class UsersServiceImplTest {
     }
 
     @Test
-    void logout_withValidToken_returnLogoutResponseDto(){
-        when(jwtService.validateToken(anyString())).thenReturn(true);
-        Assertions.assertEquals(getLogoutResponseDto(), usersService.logout("validToken"));
-    }
-
-    @Test
-    void logout_withInvalidToken_throwInvalidTokenException(){
-        when(jwtService.validateToken(anyString())).thenReturn(false);
-        Assertions.assertThrows(InvalidTokenException.class,
-                () -> usersService.logout("invalidToken"));
+    void logout_returnLogoutResponseDto(){
+        Assertions.assertEquals(getLogoutResponseDto(), usersService.logout());
     }
 
     private RegisterRequestDto getRegisterRequestDto(){

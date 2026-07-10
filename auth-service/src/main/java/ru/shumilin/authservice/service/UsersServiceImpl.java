@@ -11,7 +11,6 @@ import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.LoginResponseDto;
 import ru.shumilin.authservice.dto.response.LogoutResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
-import ru.shumilin.authservice.exception.InvalidTokenException;
 import ru.shumilin.authservice.model.LogoutStatus;
 import ru.shumilin.authservice.model.entity.RoleTypeEntity;
 import ru.shumilin.authservice.model.entity.UsersEntity;
@@ -82,13 +81,9 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public LogoutResponseDto logout(String token) {
-        if(jwtService.validateToken(token)){
-            return new LogoutResponseDto(
-                    "Вы успешно вышли из системы", // Надо ли message вынести в отдельное статическое поле, как ErrorTitleConstant?
-                    LogoutStatus.SUCCESS);
-        } else {
-            throw new InvalidTokenException(token);
-        }
+    public LogoutResponseDto logout() {
+        return new LogoutResponseDto(
+                "Вы успешно вышли из системы", // Надо ли message вынести в отдельное статическое поле, как ErrorTitleConstant?
+                LogoutStatus.SUCCESS);
     }
 }

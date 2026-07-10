@@ -9,5 +9,5 @@ import ru.shumilin.authservice.dto.response.RegisterResponseDto;
 public interface UsersService {
     RegisterResponseDto register(RegisterRequestDto registerRequestDto);
     LoginResponseDto login(LoginRequestDto loginRequestDto);
-    LogoutResponseDto logout(String token);
+    LogoutResponseDto logout();
 }
