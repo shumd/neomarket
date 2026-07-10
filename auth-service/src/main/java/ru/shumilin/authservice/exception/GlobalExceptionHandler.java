@@ -43,6 +43,13 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto(UNAUTHORIZED));
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidToken(InvalidTokenException e){
+        log.warn(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDto(UNAUTHORIZED));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleBase(Exception e){
         log.warn(e.getMessage());
