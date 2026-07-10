@@ -11,7 +11,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.LoginResponseDto;
+import ru.shumilin.authservice.dto.response.LogoutResponseDto;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
+import ru.shumilin.authservice.exception.InvalidTokenException;
+import ru.shumilin.authservice.model.LogoutStatus;
 import ru.shumilin.authservice.model.entity.RoleTypeEntity;
 import ru.shumilin.authservice.model.entity.UsersEntity;
 import ru.shumilin.authservice.exception.EmailAlreadyClaimedException;
@@ -167,11 +170,30 @@ public class UsersServiceImplTest {
                 () -> usersService.login(null));
     }
 
+    @Test
+    void logout_withValidToken_returnLogoutResponseDto(){
+        when(jwtService.validateToken(anyString())).thenReturn(true);
+        Assertions.assertEquals(getLogoutResponseDto(), usersService.logout("validToken"));
+    }
+
+    @Test
+    void logout_withInvalidToken_throwInvalidTokenException(){
+        when(jwtService.validateToken(anyString())).thenReturn(false);
+        Assertions.assertThrows(InvalidTokenException.class,
+                () -> usersService.logout("invalidToken"));
+    }
+
     private RegisterRequestDto getRegisterRequestDto(){
         return new RegisterRequestDto(
                 "Ivanov",
                 "Ivan",
                 "email",
                 "123");
+    }
+
+    private LogoutResponseDto getLogoutResponseDto(){
+        return new LogoutResponseDto(
+                "Вы успешно вышли из системы",
+                LogoutStatus.SUCCESS);
     }
 }
