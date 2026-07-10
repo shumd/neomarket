@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeHttpRequest ->
                         authorizeHttpRequest
-                                .requestMatchers("/auth/logout").authenticated()
+                                .requestMatchers("/auth/logout",
+                                        "/users/me/bank-details").authenticated()
                                 .requestMatchers("/auth/login",
                                         "/auth/register").permitAll()
                                 .requestMatchers("/swagger-ui/**",
