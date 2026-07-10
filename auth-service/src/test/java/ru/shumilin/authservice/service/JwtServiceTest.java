@@ -11,6 +11,7 @@ import ru.shumilin.authservice.model.entity.UsersEntity;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.UUID;
 
 public class JwtServiceTest {
@@ -63,5 +64,49 @@ public class JwtServiceTest {
     @Test
     void generateToken_withNullEntity_throwIllegalArgumentException(){
         Assertions.assertThrows(IllegalArgumentException.class, () -> jwtService.generateToken(null));
+    }
+
+    @Test
+    void validateToken_withValidToken_returnTrue(){
+        Assertions.assertTrue(jwtService.validateToken(
+                getToken(null, null)));
+    }
+
+    @Test
+    void validateToken_withInvalidExpiration_returnFalse(){
+        Assertions.assertFalse(jwtService.validateToken(
+                getToken(new Date(System.currentTimeMillis() - 1000), null)));
+    }
+
+    @Test
+    void validateToken_withInvalidSecret_returnFalse(){
+        String invalidSecret = "CJW9ILNCCC/v6SUuS0ljtmYJhSxo0PmAvmDBAV5ZP4Y=";
+        Assertions.assertFalse(jwtService.validateToken(
+                getToken(null, Keys.hmacShaKeyFor(invalidSecret.getBytes(StandardCharsets.UTF_8)))));
+    }
+
+    @Test
+    void validateToken_withNullToken_returnFalse(){
+        Assertions.assertFalse(jwtService.validateToken(null));
+    }
+
+    @Test
+    void validateToken_withBlankToken_returnFalse(){
+        Assertions.assertFalse(jwtService.validateToken("    "));
+    }
+
+    private String getToken(Date expiration, SecretKey secretKey){
+        SecretKey key = secretKey == null ?
+                Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)) : secretKey;
+        Date expDate = expiration == null ?
+                new Date(System.currentTimeMillis() + 100000) : expiration;
+
+        return Jwts.builder()
+                .subject("test subject")
+                .claim("role", "test role permissions")
+                .issuedAt(new Date())
+                .expiration(expDate)
+                .signWith(key)
+                .compact();
     }
 }
