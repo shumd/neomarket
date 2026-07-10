@@ -1,11 +1,13 @@
 package ru.shumilin.authservice.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import ru.shumilin.authservice.exception.InvalidTokenException;
 import ru.shumilin.authservice.model.entity.RoleTypeEntity;
 import ru.shumilin.authservice.model.entity.UsersEntity;
 
@@ -93,6 +95,49 @@ public class JwtServiceTest {
     @Test
     void validateToken_withBlankToken_returnFalse(){
         Assertions.assertFalse(jwtService.validateToken("    "));
+    }
+
+    @Test
+    void getClaims_withValidToken_returnClaims(){
+        String token = getToken(null, null);
+        Claims excepted = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        Assertions.assertEquals(excepted, jwtService.getClaims(token));
+    }
+
+    @Test
+    void getClaims_withNullToken_throwInvalidTokenException(){
+        Assertions.assertThrows(InvalidTokenException.class,
+                () -> jwtService.getClaims(null));
+    }
+
+    @Test
+    void getClaims_withBlankToken_throwInvalidTokenException(){
+        Assertions.assertThrows(InvalidTokenException.class,
+                () -> jwtService.getClaims("      "));
+    }
+
+    @Test
+    void getClaims_withInvalidExpiration_throwInvalidTokenException(){
+        Assertions.assertThrows(InvalidTokenException.class,
+                () -> jwtService.getClaims(
+                        getToken(
+                                new Date(System.currentTimeMillis() - 1000),
+                                null)));
+    }
+
+    @Test
+    void getClaims_withInvalidSecret_throwInvalidTokenException(){
+        String invalidSecret = "CJW9ILNCCC/v6SUuS0ljtmYJhSxo0PmAvmDBAV5ZP4Y=";
+
+        Assertions.assertThrows(InvalidTokenException.class,
+                () -> jwtService.getClaims(
+                        getToken(
+                                null,
+                                Keys.hmacShaKeyFor(invalidSecret.getBytes(StandardCharsets.UTF_8)))));
     }
 
     private String getToken(Date expiration, SecretKey secretKey){

@@ -1,11 +1,13 @@
 package ru.shumilin.authservice.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.shumilin.authservice.exception.InvalidTokenException;
 import ru.shumilin.authservice.model.entity.UsersEntity;
 
 import javax.crypto.SecretKey;
@@ -41,15 +43,29 @@ public class JwtService {
             if (token == null || token.isBlank())
                 throw new IllegalArgumentException("Token cant be blank");
 
-            log.info("Trying to parse token: {}", token);
+            log.info("Trying to parse token");
             Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseSignedClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e){
-            log.warn("Invalid token: {}, throw {}", token, e.getMessage());
+            log.warn("Invalid token, throw {}", e.getMessage());
             return false;
+        }
+    }
+
+    public Claims getClaims(String token) {
+        try {
+            if (token == null || token.isBlank())
+                throw new IllegalArgumentException("Token cant be blank");
+            return Jwts.parser()
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new InvalidTokenException();
         }
     }
 }
