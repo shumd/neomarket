@@ -4,8 +4,8 @@ package ru.shumilin.authservice.mapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
-import ru.shumilin.authservice.entity.RoleTypeEntity;
-import ru.shumilin.authservice.entity.UsersEntity;
+import ru.shumilin.authservice.model.entity.RoleTypeEntity;
+import ru.shumilin.authservice.model.entity.UsersEntity;
 
 import java.util.UUID;
 

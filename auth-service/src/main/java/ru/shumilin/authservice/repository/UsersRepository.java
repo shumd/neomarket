@@ -1,7 +1,7 @@
 package ru.shumilin.authservice.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import ru.shumilin.authservice.entity.UsersEntity;
+import ru.shumilin.authservice.model.entity.UsersEntity;
 
 import java.util.Optional;
 import java.util.UUID;

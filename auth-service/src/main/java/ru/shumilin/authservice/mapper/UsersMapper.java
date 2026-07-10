@@ -2,7 +2,7 @@ package ru.shumilin.authservice.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.shumilin.authservice.dto.response.RegisterResponseDto;
-import ru.shumilin.authservice.entity.UsersEntity;
+import ru.shumilin.authservice.model.entity.UsersEntity;
 
 @Component
 public class UsersMapper {

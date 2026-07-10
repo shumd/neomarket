@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
-import ru.shumilin.authservice.entity.RoleTypeEntity;
-import ru.shumilin.authservice.entity.UsersEntity;
+import ru.shumilin.authservice.model.entity.RoleTypeEntity;
+import ru.shumilin.authservice.model.entity.UsersEntity;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;

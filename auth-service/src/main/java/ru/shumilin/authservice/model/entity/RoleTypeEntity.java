@@ -1,4 +1,4 @@
-package ru.shumilin.authservice.entity;
+package ru.shumilin.authservice.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
