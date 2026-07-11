@@ -2,8 +2,8 @@ package ru.tataev.basket_service.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.tataev.basket_service.dto.BasketResponseDto;
-import ru.tataev.basket_service.dto.CreateRequestDto;
+import ru.tataev.basket_service.dto.BuyResponseDto;
+import ru.tataev.basket_service.dto.BuyRequestDto;
 import ru.tataev.basket_service.dto.ItemDto;
 import ru.tataev.basket_service.entity.Order;
 import ru.tataev.basket_service.entity.OrderStatus;
@@ -13,7 +13,6 @@ import ru.tataev.basket_service.exception.ResourceNotFoundException;
 import ru.tataev.basket_service.repository.OrderRepository;
 import ru.tataev.basket_service.repository.StatusRepository;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -24,40 +23,44 @@ public class BasketService {
     private final OrderRepository orderRepository;
     private final StatusRepository statusRepository;
 
-    public BasketResponseDto updateBasket(CreateRequestDto req){
+    public BuyResponseDto updateBasket(BuyRequestDto req){
         if (req == null){
             throw new InvalidRequestException("Пришел пустой запрос");
         }
 
         validateIdUser(req.getIdUser());
         validateIdItem(req.getIdItem());
-        validateStatus(req.getStatus());
 
-        Order order = orderRepository.findById(Long.parseLong(req.getIdOrder()))
+        Order order = orderRepository.findById(req.getIdOrder())
                 .orElseThrow(() -> new ResourceNotFoundException("Заказ с id " + req.getIdOrder() + " не найден"));
+
+        validateStatus(order.getStatus().getId());
 
         order.setIdUser(req.getIdUser());
         order.setAddress(req.getAddress());
+        // TODO: пересчитывать totalAmount на основе цен товаров, а не брать из запроса
         order.setTotalAmount(req.getTotalAmount());
 
-        Status successStatus = statusRepository.findById(3L)
-                .orElseThrow(() -> new ResourceNotFoundException("Статус SUCCESS не найден"));
+        Status successStatus = statusRepository.findById(OrderStatus.ORDER_CONFIRMED.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Статус " + OrderStatus.ORDER_CONFIRMED.getName() + " не найден"));
         order.setStatus(successStatus);
 
         order.setDateOrder(LocalDate.now());
 
         orderRepository.save(order);
 
-        return mapToDto(order);
+        //TODO: загружать idItem из БД
+        return mapToDto(order, req.getIdItem());
     }
 
-    private BasketResponseDto mapToDto(Order order){
-        BasketResponseDto res = new BasketResponseDto();
+    private BuyResponseDto mapToDto(Order order, List<ItemDto> idItem){
+        BuyResponseDto res = new BuyResponseDto();
         res.setIdOrder(String.valueOf(order.getId()));
         res.setIdUser(order.getIdUser());
         res.setAddress(order.getAddress());
         res.setTotalAmount(order.getTotalAmount());
         res.setStatus(order.getStatus().getName());
+        res.setIdItem(idItem);
         res.setDateOrder(order.getDateOrder());
         return res;
     }
@@ -90,9 +93,9 @@ public class BasketService {
         }
     }
 
-    private void validateStatus(String status){
-        if (!(OrderStatus.NOT_CREATED.getId().equals(status) || OrderStatus.NOT_PAID.getId().equals(status))){
-            throw new InvalidRequestException("Недопустимый статус: " + status);
+    private void validateStatus(Long idStatus){
+        if (!OrderStatus.DRAFT.getId().equals(idStatus)){
+            throw new InvalidRequestException("Недопустимый статус: " + idStatus);
         }
     }
 }

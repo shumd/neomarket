@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class BasketResponseDto {
+public class BuyResponseDto {
     @JsonProperty("id_order")
     private String idOrder;
 

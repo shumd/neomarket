@@ -5,19 +5,21 @@ import ru.tataev.basket_service.exception.InvalidRequestException;
 
 @Getter
 public enum OrderStatus {
-    NOT_CREATED("1"),
-    NOT_PAID("2"),
-    SUCCESS("3");
+    ITEM_OUT_OF_STACK(32L, "ITEM OUT OF STACK"),
+    ORDER_CONFIRMED(12L, "ORDER CONFIRMED"),
+    DRAFT(4L, "DRAFT");
 
-    private final String id;
+    private final Long id;
+    private final String name;
 
-    OrderStatus(String id) {
+    OrderStatus(Long id, String name) {
         this.id = id;
+        this.name = name;
     }
 
-    public static OrderStatus fromValue(String value){
-        for (OrderStatus status: values()){
-            if (status.id.equals(value)){
+    public static OrderStatus fromValue(Long value) {
+        for (OrderStatus status : values()) {
+            if (status.id.equals(value)) {
                 return status;
             }
         }

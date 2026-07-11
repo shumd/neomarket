@@ -3,6 +3,7 @@ package ru.tataev.basket_service.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import lombok.Data;
 public class ItemDto {
     @JsonProperty("id")
     @NotBlank(message = "id_item не должен иметь элементы с пустым id")
+    @Pattern(regexp = "^\\d+$", message = "id_item должен быть числом")
     private String id;
 
     @JsonProperty("count")

@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class CreateRequestDto {
+public class BuyRequestDto {
     @JsonProperty("id_order")
-    @NotBlank(message = "id_order не может быть пустым")
-    @Size(max = 36, message = "id_order имеет длину, превышающую 36 символов")
-    @Pattern(regexp = "^\\d+$", message = "id_order должен содержать только цифры")
-    private String idOrder;
+    @NotNull(message = "id_order не может быть пустым")
+    @Min(value = 1, message = "id_order должен быть >= 1")
+    @Max(value = 999999999, message = "id_order должен быть <= 999999999")
+    private Long idOrder;
 
     @JsonProperty("address")
     @NotBlank(message = "address не должен быть пустым")
@@ -29,7 +29,7 @@ public class CreateRequestDto {
     @JsonProperty("total_amount")
     @NotNull(message = "total_amount не может быть пустым")
     @DecimalMin(value = "1.0", message = "total_amount должен быть >= 1")
-    @DecimalMax(value = "99999999.99", message = "total_amount не должен превышать 99 999 999.99")
+    @DecimalMax(value = "999999999.99", message = "total_amount не должен превышать 999 999 999.99")
     @Digits(integer = 9, fraction = 2, message = "total_amount не может иметь более 2 знаков после запятой")
     private BigDecimal totalAmount;
 
@@ -38,10 +38,6 @@ public class CreateRequestDto {
     @Size(max = 10, message = "id_item должен вмещать максимум 10 элементов")
     @Valid
     private List<ItemDto> idItem;
-
-    @JsonProperty("status")
-    @NotBlank(message = "status не может быть пустым")
-    private String status;
 }
 
 
