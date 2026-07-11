@@ -1,5 +1,6 @@
 package ru.tataev.basket_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -28,6 +29,7 @@ public class AddResponseDto {
     @JsonProperty("basket_status")
     private String basketStatus;
 
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @JsonProperty("date_order")
     private LocalDate dateOrder;
 

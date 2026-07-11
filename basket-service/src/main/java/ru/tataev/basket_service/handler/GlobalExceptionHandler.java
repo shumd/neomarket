@@ -1,6 +1,7 @@
 package ru.tataev.basket_service.handler;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +20,12 @@ public class GlobalExceptionHandler {
                 .map(x -> x.getField() + ": " + x.getDefaultMessage())
                 .collect(Collectors.joining("; "));
         ErrorResponseDto res = new ErrorResponseDto(400, "Bad Request", message);
+        return ResponseEntity.status(400).body(res);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDto> handleNotReadable(HttpMessageNotReadableException ex){
+        ErrorResponseDto res = new ErrorResponseDto(400, "Bad Request", "Некорректный формат запроса");
         return ResponseEntity.status(400).body(res);
     }
 

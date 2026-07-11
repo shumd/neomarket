@@ -41,9 +41,10 @@ public class Order {
     @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
 
-    @Column(name = "id_shipping", nullable = false)
-    private Integer idShipping;
-
-    @Column(name = "id_comission", nullable = false)
-    private Integer idComission;
+    //TODO: Shipping и Comission еще не готовы в бд, поэтому пока пропускаем их
+//    @Column(name = "id_shipping", nullable = false)
+//    private Integer idShipping;
+//
+//    @Column(name = "id_comission", nullable = false)
+//    private Integer idComission;
 }

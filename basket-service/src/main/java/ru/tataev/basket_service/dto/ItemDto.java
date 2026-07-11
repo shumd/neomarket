@@ -9,8 +9,8 @@ import lombok.Data;
 @Data
 public class ItemDto {
     @JsonProperty("id")
-    @NotBlank(message = "id_item не должен иметь элементы с пустым id")
-    private String id;
+    @NotNull(message = "id_item не должен иметь элементы с пустым id")
+    private Long id;
 
     @JsonProperty("count")
     @NotNull(message = "id_item не должен иметь элементы с пустым count")
