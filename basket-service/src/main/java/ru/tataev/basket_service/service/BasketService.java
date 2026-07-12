@@ -29,7 +29,6 @@ public class BasketService {
         }
 
         validateIdUser(req.getIdUser());
-        validateIdItem(req.getIdItem());
 
         Order order = orderRepository.findById(req.getIdOrder())
                 .orElseThrow(() -> new ResourceNotFoundException("Заказ с id " + req.getIdOrder() + " не найден"));
@@ -72,24 +71,6 @@ public class BasketService {
 
         if (idUser.version() != 4){
             throw new InvalidRequestException("id_user должен быть версии UUID v4");
-        }
-    }
-
-    private void validateIdItem(List<ItemDto> idItem){
-        if (idItem == null || idItem.isEmpty()){
-            throw new InvalidRequestException("id_item не может быть пустым");
-        }
-
-        try {
-            long item;
-            for (ItemDto itemDto : idItem) {
-                item = Long.parseLong(itemDto.getId());
-                if (item <= 0) {
-                    throw new InvalidRequestException("id_item должен иметь элементы только с положительными id");
-                }
-            }
-        } catch (NumberFormatException e) {
-            throw new InvalidRequestException("id_item содержит элементы с нечисловыми id");
         }
     }
 
