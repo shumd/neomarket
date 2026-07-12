@@ -37,7 +37,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto request) {
-        if(request == null)
+        if (request == null)
             throw new IllegalArgumentException("Request cant be null");
 
         log.info("Trying to register user with email: {}", request.email());
@@ -45,7 +45,7 @@ public class UsersServiceImpl implements UsersService {
         UsersEntity usersEntity = usersRepository.findByEmail(request.email())
                 .orElse(null);
 
-        if(usersEntity == null){
+        if (usersEntity == null) {
             RoleTypeEntity customerRoleTypeEntity = roleTypeRepository
                     .findById(customerRoleTypeId)
                     .orElseThrow(() -> new RoleTypeNotFoundException(customerRoleTypeId));
@@ -66,14 +66,14 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto request) {
-        if(request == null) throw new IllegalArgumentException("Request cant be null");
+        if (request == null) throw new IllegalArgumentException("Request cant be null");
 
         log.info("Trying to login user with email: {}", request.email()); // Лучше же не вносить в лог пароль?
 
         UsersEntity entity = usersRepository.findByEmail(request.email())
                 .orElseThrow(() -> new InvalidLoginDataException(request.email()));
 
-        if (!passwordEncoder.matches(request.password(), entity.getHashPassword())){
+        if (!passwordEncoder.matches(request.password(), entity.getHashPassword())) {
             throw new InvalidLoginDataException(request.email());
         }
 
@@ -81,7 +81,9 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public LogoutResponseDto logout() {
+    public LogoutResponseDto logout(String token) {
+        jwtService.addToBlackList(token);
+
         return new LogoutResponseDto(
                 "Вы успешно вышли из системы", // Надо ли message вынести в отдельное статическое поле, как ErrorTitleConstant?
                 LogoutStatus.SUCCESS);
@@ -90,10 +92,10 @@ public class UsersServiceImpl implements UsersService {
     @Override
     @Transactional
     public UpdateBankDetailResponseDto updateBankDetail(String email, UpdateBankDetailRequestDto request) {
-        if(email == null || email.isBlank())
+        if (email == null || email.isBlank())
             throw new InvalidUpdateBankDetailDataException("Email cant be blank");
 
-        if(request == null || request.bankDetail() == null || request.bankDetail().isBlank()){
+        if (request == null || request.bankDetail() == null || request.bankDetail().isBlank()) {
             throw new InvalidUpdateBankDetailDataException("UpdateBankDetailRequestDto cant be blank");
         }
 

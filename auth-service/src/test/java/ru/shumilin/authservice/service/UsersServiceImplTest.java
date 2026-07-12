@@ -152,7 +152,7 @@ public class UsersServiceImplTest {
 
     @Test
     void logout_returnLogoutResponseDto(){
-        Assertions.assertEquals(getLogoutResponseDto(), usersService.logout());
+        Assertions.assertEquals(getLogoutResponseDto(), usersService.logout(anyString()));
     }
 
     @Test

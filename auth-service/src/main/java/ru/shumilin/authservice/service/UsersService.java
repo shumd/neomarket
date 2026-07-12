@@ -11,6 +11,6 @@ import ru.shumilin.authservice.dto.response.UpdateBankDetailResponseDto;
 public interface UsersService {
     RegisterResponseDto register(RegisterRequestDto registerRequestDto);
     LoginResponseDto login(LoginRequestDto loginRequestDto);
-    LogoutResponseDto logout();
+    LogoutResponseDto logout(String token);
     UpdateBankDetailResponseDto updateBankDetail(String email, UpdateBankDetailRequestDto request);
 }
