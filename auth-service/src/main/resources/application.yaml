@@ -10,3 +10,7 @@ spring:
     properties:
       hibernate:
         default_schema: users
+  data:
+    redis:
+      port: 6379
+      host: localhost
