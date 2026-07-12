@@ -1,0 +1,15 @@
+app:
+  active-status-id: 1
+
+spring:
+  application:
+    name: catalog-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/neomarket
+    username: postgres
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: catalog
