@@ -4,19 +4,25 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.shumilin.authservice.exception.InvalidTokenException;
+import ru.shumilin.authservice.exception.TokenInBlackListException;
 import ru.shumilin.authservice.model.entity.UsersEntity;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
-@Component
+@Service
 @Slf4j
+@RequiredArgsConstructor
 public class JwtService {
+    private final JwtBlackListService blackListService;
 
     @Value("${app.jwt.secret}")
     private String secret;
@@ -32,6 +38,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(usersEntity.getEmail())
                 .claim("role", usersEntity.getRoleType().getPermissions())
+                .id(UUID.randomUUID().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
@@ -44,12 +51,16 @@ public class JwtService {
                 throw new IllegalArgumentException("Token cant be blank");
 
             log.info("Trying to parse token");
+
+            if(blackListService.isInBlackList(getClaims(token)))
+                throw new TokenInBlackListException();
+
             Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e){
+        } catch (JwtException | IllegalArgumentException | TokenInBlackListException | InvalidTokenException e){
             log.warn("Invalid token, throw {}", e.getMessage());
             return false;
         }
@@ -67,5 +78,9 @@ public class JwtService {
         } catch (JwtException | IllegalArgumentException e) {
             throw new InvalidTokenException();
         }
+    }
+
+    public void addToBlackList(String token){
+        blackListService.addToBlackList(getClaims(token));
     }
 }

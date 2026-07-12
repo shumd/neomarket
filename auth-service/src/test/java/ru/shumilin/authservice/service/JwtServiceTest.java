@@ -6,6 +6,10 @@ import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import ru.shumilin.authservice.exception.InvalidTokenException;
 import ru.shumilin.authservice.model.entity.RoleTypeEntity;
@@ -15,9 +19,14 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
-
+@ExtendWith(MockitoExtension.class)
 public class JwtServiceTest {
-    private final JwtService jwtService = new JwtService();
+
+    @Mock
+    private JwtBlackListService blackListService;
+
+    @InjectMocks
+    private JwtService jwtService;
     private final String secret = "CJW9ILNCXN/v6SUuS0ljtmYJhSxo0PmAvmDBAV5ZP4Y=";
     private final SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
