@@ -15,7 +15,7 @@ import ru.tataev.basket_service.service.BasketService;
 public class BasketRestController {
     private final BasketService basketService;
 
-    @GetMapping("OpenBasket/{id}")
+    @GetMapping("/OpenBasket/{id}")
     public ResponseEntity<OrderResponseDto> get(@PathVariable String id){
         OrderResponseDto res = basketService.getBasketById(id);
         return ResponseEntity.status(200).body(res);
