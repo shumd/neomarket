@@ -314,7 +314,7 @@ public class AuthRestControllerTest {
     public void logout_withValidToken_returnLogoutResponseDto(){
         String token = new JwtServiceTest().getToken(null, null);
 
-        when(usersService.logout())
+        when(usersService.logout(any()))
                 .thenReturn(new LogoutResponseDto("test", LogoutStatus.SUCCESS));
 
         mockMvc.perform(post("/auth/logout")
@@ -324,7 +324,7 @@ public class AuthRestControllerTest {
                 .andExpect(jsonPath("$.message").value("test"))
                 .andExpect(jsonPath("$.status").value(LogoutStatus.SUCCESS.value()));
 
-        verify(usersService, times(1)).logout();
+        verify(usersService, times(1)).logout(any());
     }
 
     @Test
@@ -362,7 +362,7 @@ public class AuthRestControllerTest {
         String token = new JwtServiceTest()
                 .getToken(null, null);
 
-        when(usersService.logout()).thenThrow(NullPointerException.class);
+        when(usersService.logout(any())).thenThrow(NullPointerException.class);
 
         mockMvc.perform(post("/auth/logout")
                         .accept(MediaType.APPLICATION_JSON_VALUE)

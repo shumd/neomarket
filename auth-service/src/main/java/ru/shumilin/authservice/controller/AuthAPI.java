@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
 import ru.shumilin.authservice.dto.response.ErrorResponseDto;
@@ -70,6 +72,7 @@ public interface AuthAPI {
     ResponseEntity<LoginResponseDto> login(LoginRequestDto request);
 
     @Operation(summary = "Выход пользователя из системы")
+    @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Пользователь успешно вышел из системы",
@@ -92,5 +95,5 @@ public interface AuthAPI {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponseDto.class))),
     })
-    ResponseEntity<LogoutResponseDto> logout();
+    ResponseEntity<LogoutResponseDto> logout(Authentication authentication);
 }

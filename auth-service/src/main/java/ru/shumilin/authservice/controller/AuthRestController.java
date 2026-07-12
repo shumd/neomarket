@@ -2,10 +2,10 @@ package ru.shumilin.authservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.shumilin.authservice.dto.request.LoginRequestDto;
 import ru.shumilin.authservice.dto.request.RegisterRequestDto;
@@ -35,8 +35,8 @@ public class AuthRestController implements AuthAPI{
 
     @Override
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LogoutResponseDto> logout() {
+    public ResponseEntity<LogoutResponseDto> logout(Authentication authentication) {
         return ResponseEntity.ok()
-                .body(usersService.logout());
+                .body(usersService.logout((String) authentication.getCredentials()));
     }
 }
