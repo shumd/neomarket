@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tataev.basket_service.dto.*;
+import ru.tataev.basket_service.dto.DeleteRequestDto;
+import ru.tataev.basket_service.dto.DeleteResponseDto;
 import ru.tataev.basket_service.service.BasketService;
 
 @RestController
@@ -29,6 +31,12 @@ public class BasketRestController {
     @GetMapping("/OpenBasket/{id}")
     public ResponseEntity<OrderResponseDto> get(@PathVariable String id){
         OrderResponseDto res = basketService.getBasketById(id);
+        return ResponseEntity.status(200).body(res);
+    }
+
+    @DeleteMapping("/DeleteProductFromBasket")
+    public ResponseEntity<DeleteResponseDto> deleteBasket(@Valid @RequestBody DeleteRequestDto req){
+        DeleteResponseDto res = basketService.deleteItemsFromBasket(req);
         return ResponseEntity.status(200).body(res);
     }
 }
