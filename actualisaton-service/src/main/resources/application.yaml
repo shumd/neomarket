@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: basket-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/basket_service
+    username: basket_user
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
