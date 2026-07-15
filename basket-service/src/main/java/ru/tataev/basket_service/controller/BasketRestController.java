@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.tataev.basket_service.dto.BuyResponseDto;
-import ru.tataev.basket_service.dto.BuyRequestDto;
-import ru.tataev.basket_service.dto.AddRequestDto;
-import ru.tataev.basket_service.dto.AddResponseDto;
+import ru.tataev.basket_service.dto.*;
 import ru.tataev.basket_service.service.BasketService;
 
 @RestController
@@ -26,6 +23,12 @@ public class BasketRestController {
     @PostMapping("/BuyFromBasket")
     public ResponseEntity<BuyResponseDto> buy(@Valid @RequestBody BuyRequestDto req) {
         BuyResponseDto res = basketService.updateBasket(req);
+        return ResponseEntity.status(200).body(res);
+    }
+
+    @GetMapping("/OpenBasket/{id}")
+    public ResponseEntity<OrderResponseDto> get(@PathVariable String id){
+        OrderResponseDto res = basketService.getBasketById(id);
         return ResponseEntity.status(200).body(res);
     }
 }
