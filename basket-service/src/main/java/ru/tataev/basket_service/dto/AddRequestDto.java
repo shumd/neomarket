@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 public class AddRequestDto {
     @JsonProperty("id_item")
-    @NotBlank(message = "id_item не может быть пустым")
+    @NotNull(message = "id_item не может быть пустым")
     @Min(value = 1, message = "id_item должен быть >= 1")
     @Max(value = 999999999, message = "id_item должен быть <= 999999999")
     private Long idItem;
